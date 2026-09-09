@@ -1,16 +1,16 @@
-backlighting, rim lighting
+backlighting, light rays
 backlighting, lens flare, sunset
 dappled sunlight, light rays
 sunbeam, light particles, bloom
-soft lighting, warm lighting
-cinematic lighting, dramatic shadow
+sunlight, window, indoors
 sidelighting, high contrast
 neon lights, night, glowing
-volumetric lighting, god rays
-candlelight, dim lighting
-overcast, soft shadow
-window light, indoors, sunlight
-golden hour, orange sky, long shadow
-blue hour, dusk, city lights
+light rays, sunbeam, fog
+candlelight, dark, lamp
+overcast, shade
+sunset, orange sky, evening
+dusk, twilight, city lights
 rain, wet, reflection, puddle
-snow, cold, pale light
+snow, snowing, winter
+moonlight, night sky, full moon
+spotlight, dark background

@@ -1,17 +1,19 @@
-cherry blossoms, petals, spring, school gate
-classroom, window, afternoon, chalkboard
+cherry blossoms, petals, school
+classroom, window, chalkboard
 rooftop, fence, sunset, city
 summer, beach, ocean, blue sky, cumulonimbus cloud
-summer festival, festival stall, lantern, night
+summer festival, festival, food stand, lantern, night
 fireworks, night sky, river
 sunflower field, blue sky, wind
-rain, umbrella, wet street, reflection
-autumn leaves, maple, park bench
-library, bookshelf, warm lighting
-cafe, table, coffee cup, window
+rain, umbrella, wet, reflection
+autumn leaves, maple leaf, falling leaves, park bench
+library, bookshelf, lamp
+cafe, table, cup, coffee, window
 train interior, window, evening
-city street, crosswalk, neon lights, night
+city, crosswalk, neon lights, night
 shrine, torii, stone stairs, forest
-snow, winter, street lamp, night
-bedroom, bed, morning light, curtains
-convenience store, night, fluorescent light
+snow, winter, lamppost, night
+bedroom, bed, morning, curtains
+convenience store, night, fluorescent lamp
+full moon, night sky, dango, autumn
+halloween, jack-o'-lantern, witch hat, pumpkin, night

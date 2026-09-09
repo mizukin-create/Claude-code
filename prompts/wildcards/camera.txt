@@ -1,13 +1,14 @@
-close-up, face focus
+close-up, portrait
 portrait, looking at viewer
 upper body, from side
 upper body, from above
 cowboy shot, from below
 cowboy shot, dutch angle
 full body, wide shot
-full body, from below, dynamic pose
+full body, from below, contrapposto
 from behind, looking back
 pov, foreshortening
 fisheye, close-up
-eye focus, extreme close-up
-wide shot, scenery, small figure
+straight-on, upper body
+wide shot, scenery
+profile, upper body

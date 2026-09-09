@@ -1,5 +1,7 @@
 # 03. Anima（Circlestone Labs）× ComfyUI 徹底調査（2026年9月版）
 
+> **第 2 回追記（2026-09-09）**: 公式 README（HF）・Civitai カード・note「108 スタイル比較」本文で検証した結果は `report/07_prompt_verification.md` §2・§5。追加事項: Danbooru と Gelbooru で表記が違うタグは Gelbooru 側を優先／まず Turbo から始めるのが公式推奨／Civitai カードは CFG 4〜6・Aesthetic は CFG 3 でも可／LoRA は LLM adapter を学習せず rank 32・LR 2e-5 から／版の公開日は turbo-v1.0 2026-07-08、aesthetic-v1.1 2026-07-13、turbo-v1.1 2026-08-24（Civitai）。様式タグは `cel shading` `flat color` が無効で、`90s anime style` `retro anime style` `VHS anime aesthetic` `soft pastel style` が有効（`prompts/anima_templates.md` §4）。
+
 
 > 調査メモ: 出口プロキシは GitHub 以外のほぼ全ドメインをブロック。公式ドキュメントとワークフローは Comfy-Org/docs・Comfy-Org/workflow_templates・ComfyUI 本体のソース（GitHub）を直接読み、HF README は GitHub 上のミラー／派生ガイドを突き合わせ、その他は検索エンジンの要約で補った。note.com「108スタイル比較」（ai_0049）は本文未読。
 

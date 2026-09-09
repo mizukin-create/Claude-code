@@ -1,5 +1,7 @@
 # 02. Illustrious XL プロンプト技術・設定 徹底調査（2026年9月時点）
 
+> **第 2 回追記（2026-09-09）**: 本レポートの記述をモデルカード（Civitai API）と Danbooru タグ DB で検証し、13 項目を修正した。修正一覧は `report/07_prompt_verification.md` §1、修正済みテンプレは `prompts/illustrious_templates.md`。主な修正: Hassaku はメタタグ・作品名タグを学習していない／WAI v17 は 1024×1344 推奨・品質タグ 4〜5 個上限・レーティング `general/sensitive/nsfw/explicit`／Nova Anime XL は無編集出力の商用利用不可／RouWei は `by ` 接頭＋BREAK 必須／Prefect は v8／§5 の `rim lighting` `cinematic lighting` `face focus` 等は Danbooru タグではなく、`silver hair`→`grey hair`、`violet eyes`→`purple eyes`、`anime screencap`→`anime screenshot`（改名）が正規表記。
+
 
 > 調査メモ: 検索 44 回。note.com / Civitai / HF / SeaArt / Reddit / X の本文は直接取得できず、検索要約から抽出。GitHub（README・Wiki）のみ本文確認。信頼度 ★=一次資料本文確認 / ☆=検索要約経由 / △=一般知見・経験則。
 

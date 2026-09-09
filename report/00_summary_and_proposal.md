@@ -4,7 +4,28 @@
 作成日: 2026-09-09
 この文書は、5本の調査レポート（01〜05）の結論を統合し、具体的な「プロンプト」「ワークフロー」「投稿運用」の提案に落とし込んだものです。事実と出典は各レポートに、判断と提案はここにまとめています。
 
-> **調査の制約（先に明記）**: このセッションのネットワークでは X 本体・note・pixiv・Civitai・Hugging Face・docs.comfy.org への直接アクセスが遮断されていたため、X の個別投稿や @mi_Create_mi の作品そのものは分析できていません。X のアルゴリズムは GitHub 上の公開コード（xai-org/x-algorithm）を一次資料として確認し、それ以外の多くは検索エンジン経由の二次情報です。数値は「要検証」の前提で読み、自分の環境と X アナリティクスで必ず確かめてください。
+> **調査の制約（先に明記）**: 第 1 回のセッションでは X 本体・note・pixiv・Civitai・Hugging Face・docs.comfy.org への直接アクセスが遮断されていたため、X の個別投稿や @mi_Create_mi の作品そのものは分析できていません。X のアルゴリズムは GitHub 上の公開コード（xai-org/x-algorithm）を一次資料として確認し、それ以外の多くは検索エンジン経由の二次情報です。数値は「要検証」の前提で読み、自分の環境と X アナリティクスで必ず確かめてください。
+
+---
+
+## 第 2 回（2026-09-09 続き）の更新点 — 実データと一次資料で分かったこと
+
+第 2 回では X（公開 API）・pixiv・Civitai・Hugging Face・note・Danbooru に直接アクセスできたため、本文書の前提と提案を次の通り修正した。詳細は `report/06_x_post_analysis.md`（X 実データ）と `report/07_prompt_verification.md`（プロンプト検証）。
+
+| # | 前回の前提 | 実データ・一次資料 | 提案の変更 |
+|---|---|---|---|
+| 1 | フォロワー 3,000 人超（1 万人の壁の手前） | **10,155 人**（2026-09-09）。Premium 加入、投稿 2,611・メディア 2,406 | 目標を 3 万人（同業中堅帯の下端）に置き直す |
+| 2 | 本垢は全年齢固定・R-18 はサブ垢へ（一般論） | **本垢の画像投稿が X の埋め込み API で「表示不可（tombstone）」になり、公式の埋め込みタイムラインが 2025-06-15 で止まっている**。公開コードでは作者単位の NSFW フラグ（自己申告のセンシティブ設定・運営付与ラベル）で圏外推薦から投稿ごと落ちる仕様（06 §3） | **最優先**: 「センシティブな内容を含むメディア」設定の確認、Under the Hood でのラベル確認、本垢から R-18 導線を外す |
+| 3 | 二次創作は続けても良いが主軸はオリキャラ | 取得できた 70 投稿は 100% 版権キャラ。伸びた投稿（最大 2,840 いいね・閲覧 5.1 万）はポケモン・五等分など人気キャラだが、**返信は 70 件合計 25、引用 3** で会話が生まれていない | 本垢＝オリキャラ連載（会話が生まれる一言本文）、版権は週 1 の単発枠。設定シートとカレンダーを同梱 |
+| 4 | ハッシュタグ 0〜2 個、`#AIイラスト #AIart` | 現状は毎回 3〜4 個＋「フォロー・RT お願い」の定型文。同業の 2 万人以上は **タグ 0〜0.3 個・本文 0〜25 字・1 枚投稿**が中央値。アカウント内比較ではタグ数・時間帯・曜日に差がなく、長文・動画・URL が下がる | タグは 0〜1 個、定型文を廃止して 20 字前後の一言・セリフに |
+| 5 | 投稿時刻 21:00 / 12:15 / 14:00 | 同業中堅は「毎朝 06:40 の挨拶」「12:00 / 21:00 ちょうど」など固定時刻の儀式型。自データは 06〜11 時のいいね率が最高（3.2%） | 21:00 主枠 ＋ 06:40 副枠に集約し A/B。深夜 02:00 / 04:00 は海外向け実験枠 |
+| 6 | FANBOX へ誘導 | **pixivFANBOX は 2026 年 4 月時点でも AI 生成作品の有料配布を全面禁止** | PicSpace ＋ Patreon に一本化 |
+| 7 | プロンプトのタグは検索要約由来 | Danbooru タグ DB で 338 語を検証: 別名 12 語（`silver hair`→`grey hair`、`violet eyes`→`purple eyes`、`anime screencap`→`anime screenshot` 等）、非タグ 37 語（`rim lighting` `cinematic lighting` `face focus` 等）、テンプレ 4 本が **75 トークン超で品質タグが第 2 チャンクに落ちていた** | テンプレ・ワイルドカードを正規表記と 75 トークン以内に改訂。`tools/prompt_lint.py` で自動検証 |
+| 8 | Hassaku に `absurdres, highres`、Nova を背景用に推奨 | Hassaku はメタタグ・作品名タグを学習していない。**Nova Anime XL は無編集の生成画像の商用利用を禁止** | Hassaku は `masterpiece, best quality`。販売用に Nova を使わない |
+| 9 | Anima の様式は `flat color` `anime coloring` `retro artstyle` | 108 枚同一 seed 比較: `cel shading` `flat color` は無効、`90s anime style` `retro anime style` `VHS anime aesthetic` `soft pastel style` は明確に効く。`3D` `render` は実写化 | 様式候補 1（レトロアニメ）は両モデルで成立、候補 2（水彩）は Illustrious 側、候補 3（セミリアル）は Illustrious 2.5D 派生で |
+| 10 | 要確認だった WAI のレーティング語彙・Illustrious v3.6・FANBOX 規約 | WAI v17: `general / sensitive / nsfw / explicit`。v3.6 のオープンウェイトは未確認（HF は v2.0 まで）。FANBOX は禁止継続 | §9 を更新 |
+
+新規ファイル: `report/06`・`report/07`・`prompts/tag_dictionary_verified.md`・`prompts/character_sheet_template.md`・`prompts/post_calendar_2026-09-10.md`・`prompts/ab_test_protocol.md`・`tools/prompt_lint.py`・`workflows/anima_to_illustrious_2stage.json`。
 
 ---
 
@@ -12,12 +33,12 @@
 
 | 項目 | 把握できたこと（検索スニペット由来） |
 |---|---|
-| アカウント | 2022年12月開設、フォロワー 3,000 人超。趣味で AI イラスト制作、キャラクターイラストのリクエスト受付 |
-| 販路 | Booth（直近は非公開状態）／ PicSpace ／ pixivFANBOX「mizu-ai」／ R-18 は pixiv・Patreon |
-| 作品傾向 | pixiv に原神（#GenshinImpact）タグの作品あり。オリジナルと二次創作の比率、画風、投稿頻度は未確認 |
+| アカウント | 2022年12月開設、**フォロワー 10,155 人（2026-09-09 実測、06 参照）**、Premium 加入。趣味で AI イラスト制作、キャラクターイラストのリクエスト受付。サブ垢 @mizukin_sub（2026-03 開設、R-18・テスト投稿） |
+| 販路 | PicSpace（R-18 月額パック・キャラ別セット 500〜600 円）／ Patreon ／ Booth は非公開。pixivFANBOX は AI 生成の有料配布が禁止のため使えない |
+| 作品傾向 | X の投稿 70 件（2025-06〜2026-04）は 100% 版権キャラ（アイマス・ホロライブ・にじさんじ・ぶいすぽ・原神・ブルアカ 等）、2 枚組、832×1216 の 2 倍サイズ。pixiv 20 作品も版権・リクエスト詰め合わせ |
 | 環境 | SD WebUI（Illustrious）＋ ComfyUI（Anima） |
 
-公開情報で確認できる「2次元 AI 美少女」系の上位層は数千〜5万フォロワー帯です（01 参照）。3,000 人は「次の壁 = 1万人」の手前にいる、伸びしろの大きい位置です。
+公開情報で確認できる「2次元 AI 美少女」系の上位層は数千〜6 万フォロワー帯です（01・06 参照）。1 万人は既に越えており、次の壁は「中堅帯（2〜6 万人）」です。ただし 06 §3 の通り、本垢の画像投稿が埋め込み・推薦から外れている可能性が高く、まずそこを解消しないと以降の施策が圏外に届きません。
 
 ---
 
@@ -163,9 +184,13 @@ v-pred 系（Illustrious v3.5-vpred / NoobAI-vpred / RouWei-vpred）を試すな
 
 ### 5.3 同梱ファイル
 - `workflows/anima_t2i_hires.json`: Anima 用 ComfyUI ワークフロー（コアノードのみ、カスタムノード不要）。txt2img → 1.25x 2nd pass → 2x ESRGAN。Turbo LoRA ノードは既定でバイパス。
+- `workflows/anima_to_illustrious_2stage.json`: パイプライン C の実装（Anima Aesthetic → 4x-AnimeSharp → 1024×1536 → WAI v17 img2img denoise 0.45 ＋ ControlNet union-promax tile 0.6 → 2x）。コアノードのみ。
 - 構図固定・インペイントは ComfyUI のテンプレートブラウザにある公式「Anima Lllite: Depth Control to Image」「Any Control to Image」「Image Inpainting」を使う（ModelPatchLoader → AnimaLLLiteApply）。
-- `prompts/illustrious_templates.md` / `prompts/anima_templates.md`: 5 パターンのテンプレとタグ辞典。
+- `prompts/illustrious_templates.md` / `prompts/anima_templates.md`: 5 パターンのテンプレ（第 2 回で Danbooru 正規表記・75 トークン以内・モデルカード準拠に改訂）。
+- `prompts/tag_dictionary_verified.md`: 推奨タグの Danbooru 投稿数付き辞典と置き換え表。
+- `prompts/character_sheet_template.md` / `prompts/post_calendar_2026-09-10.md` / `prompts/ab_test_protocol.md`: 設定シート、4 週間カレンダー、A/B 手順。
 - `prompts/wildcards/`: Dynamic Prompts 用（光・画角・表情・衣装・季節・様式・髪型）。
+- `tools/prompt_lint.py`: プロンプトの検証・変換 CLI（`tools/README.md`）。
 
 ### 5.4 環境更新チェックリスト
 - [ ] Illustrious 派生を最新に（WAI-illustrious v17、Hassaku v3.4、Nova Anime XL v19、RouWei 0.8 のいずれか 2 つ）
@@ -210,7 +235,7 @@ v-pred 系（Illustrious v3.5-vpred / NoobAI-vpred / RouWei-vpred）を試すな
 
 | 週 | やること | 完了の目安 |
 |---|---|---|
-| 第 1 週 | 環境更新（§5.4）、主役キャラ 1〜2 体の設定シートと固定プロンプト、プロフィール・固定ポスト・導線の整備、サブ垢分離 | 固定プロンプトで 20 枚出して顔・衣装がブレない |
+| 第 1 週 | **センシティブ設定・可視性ラベルの確認と本垢からの R-18 導線分離（06 §3.3）**、環境更新（§5.4）、主役キャラ 1〜2 体の設定シートと固定プロンプト（`prompts/character_sheet_template.md`）、プロフィール・固定ポスト・導線の整備 | 固定プロンプトで 20 枚出して顔・衣装がブレない。埋め込み（oembed）で画像投稿が表示される |
 | 第 2 週 | X/Y/Z plot で基準値確定（CFG 4/5/6 × Hires denoise 0.3/0.4/0.5 × 品質タグ有無）、連載開始（週 3）、界隈 100 人フォロー＋毎日返信 | 週 3 投稿を同時刻に守れた |
 | 第 3 週 | 様式実験（候補 3 つを各 2 投稿）、差分投票 1 回、記念日投稿 1 回、Anima LLLite で構図固定した勝負作 1 枚（パイプライン C） | いいね率・返信率で様式を仮決定 |
 | 第 4 週 | ループ動画 1 本、企画 1 回、4 枚組メイキング 1 回、アナリティクス見直し（時間帯・枚数・様式の A/B）、キャラ LoRA 学習に着手 | 次月の投稿カレンダーが埋まっている |
@@ -231,11 +256,19 @@ v-pred 系（Illustrious v3.5-vpred / NoobAI-vpred / RouWei-vpred）を試すな
 
 ---
 
-## 9. 要確認事項（本調査で確定できなかったこと）
-- @mi_Create_mi の実際の投稿・画風・反応データ（X に直接アクセスできず）。
-- Illustrious v3.6 のオープンウェイト配布有無、WAI v17 の 4 段階レーティングタグの正確な語彙。
-- Anima の note「108 スタイル比較」記事の本文（検索要約のみ）。
+## 9. 要確認事項（第 2 回で更新）
+
+解決済み:
+- @mi_Create_mi の投稿・反応データ → 06 で 70 件を分析（2026 年 5 月以降は未取得）。
+- WAI v17 のレーティング語彙 → `general / sensitive / nsfw / explicit`（モデルカード、07）。
+- Anima「108 スタイル比較」本文 → 取得・反映（07 §5）。
+- pixivFANBOX の規約 → AI 生成作品の有料配布は 2026 年 4 月時点でも全面禁止（06 §0）。
+
+未確認のまま:
+- 本垢に付いている X の可視性ラベル（自己申告のセンシティブ設定か、運営・分類器のラベルか）。Under the Hood（x.com/i/under_the_hood）で本人が確認する必要がある（06 §3.3）。
+- Illustrious v3.6 のオープンウェイト配布（Hugging Face の公開は v2.0 まで）。
+- `anime screencap` → `anime screenshot` の Danbooru 改名時期（Illustrious 派生でどちらが効くかは X/Y/Z で要検証）。
 - X の PNG 保持条件・長辺上限、「投稿後 30 分」閾値の有無（公開コードには存在しない）。
-- pixivFANBOX の AI 生成コンテンツに関する最新規約（2023 年の禁止以降の改定内容）。
+- 深夜 02:00 / 04:00 投稿の上位入りが海外閲覧によるものか（X アナリティクスの地域データで確認）。
 
 各レポートの「未確認」「要確認」「推測」の表記を、実行前に一次ソースで確かめてください。
