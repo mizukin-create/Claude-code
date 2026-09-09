@@ -130,6 +130,45 @@ x.com/i/under_the_hood は、月ごとに「自分の投稿・アカウントに
 
 現状でも閲覧 1〜5 万の投稿があるのは、フォロワー（1 万人）と検索経由の到達が残っているため。**圏外推薦が戻れば同じ投稿でも到達が数倍になる余地**がある。
 
+### 3.6 シャドウバンチェッカーの「Search Ban」「Search Suggestion Ban」の意味と、ラベルが付く経路（2026-09-09 追記）
+
+本人の確認（2026-09-09）: シャドウバンチェッカーで **Search Suggestion Ban（検索候補から除外）と Search Ban（検索結果から除外）が「該当」**、Ghost Ban と Reply Deboosting は「非該当」。本人によれば全年齢運用で、明確な NSFW イラストの投稿歴はない。
+
+**チェッカーの 2 項目が何を検出しているか（2023 年公開コード twitter/the-algorithm `visibilitylib`）**
+
+| チェッカーの項目 | 対応する検索面のポリシー | 除外条件になるアカウントラベル・フラグ | 適用される閲覧者 |
+|---|---|---|---|
+| Search Suggestion Ban（候補） | `UserSearchTypeaheadPolicy` | `NsfwNearPerfect` / `NsfwHighPrecision` / **`NsfwAvatarImage`（アイコン）/ `NsfwBannerImage`（ヘッダー）** / `NsfwText` 系 / Abusive / SpamHighRecall | ログアウト、または検索設定「センシティブな内容を表示しない」が ON（既定）の閲覧者 |
+| Search Ban（結果） | `SearchTopPolicy` / `SearchLatestPolicy` の `userBaseRules` ＋ tweetRules | 上と同じアカウントラベル、投稿側の `NSFW_HIGH_PRECISION` / `NSFW_HIGH_RECALL` ラベル、作者の `nsfw_user` / `nsfw_admin` フラグ（`SearchAvoidTweetNsfwUserRule` 等） | 同上 |
+
+つまり「バン」ではなく、**成人向けフィルタが既定 ON の閲覧者に対してアカウントごと非表示**になっている状態。検索設定でフィルタを切った閲覧者には表示される（自分で確認するなら、別アカウントで「検索設定 → センシティブな内容を含むものを表示しない」を OFF にして `from:mi_Create_mi` を検索し、表示されればこの種別）。Ghost Ban・Reply Deboosting が非該当なので、スパム系ラベルではなく NSFW 系ラベルに絞られる。
+
+**明確な NSFW を投稿していなくてもアカウントラベルが付く経路（2026 年公開コード xai-org/x-algorithm）**
+
+1. **投稿画像の自動判定 → 作者ラベル**（`botmaker-rules/scarecrow/bot/NsfwTweetMediaProcessor.bot`、派生関数 `ApplyNsfwUserLabel.df` / `ApplyNsfwUserLabelOrCreateReport.df`）。画像ごとに成人向けモデルが採点し、高精度側（新モデル閾値 0.95）は `NSFW_HIGH_PRECISION`、高再現側は `NSFW_HIGH_RECALL`、0.99 超は `NSFW_NEAR_PERFECT`。**同じ作者の該当投稿が 1 日に 3 件以上**になると、作者に同名のアカウントラベルが **7 日間の期限付き**で付く（1 日 1 回まで）。高 PageRank・グレー認証・直近 90 日に手動解除歴のある作者は自動付与ではなく人手レビュー送りになる。Premium（青バッジ）はこの除外に含まれない。
+2. **アイコン・ヘッダー画像の判定**: `NsfwAvatarImage` / `NsfwBannerImage` は別系統のラベルで、`agatha`（アカウント採点の学習ジョブ）は `NsfwHighPrecision` とこの 2 つを「NSFW アカウントの正例」として扱う（`agatha/scalding/labels/nsfw/NSFWLabelExtraction.scala`、直近 30 日）。
+3. **アカウント採点が画像判定に混ざる**: 画像分類器 `pnsfwmedia` は CLIP 画像埋め込みに加え、`agatha` の NSFW スコア、テキスト由来の `nsfw_text_user_score`、フォロワーの成人向け志向 `nsfw_consumer_follower_score`、フォロワー数を入力にする。**一度アカウント側のスコアが上がると、穏当な画像も NSFW 側に判定されやすくなる**自己強化がある。
+4. **「センシティブなメディアとしてマーク」を自分で ON にした場合**: `nsfw_user` イベントを受けて `NSFW_HIGH_PRECISION` と `NSFW_HIGH_RECALL` のアカウントラベルを付与するボット（`nsfw_user_write_user_label.bot`）がある。安全側のつもりで ON にすると逆効果になる。
+
+**@mi_Create_mi に当てはまる要因**
+
+| 要因 | 観測 |
+|---|---|
+| アイコン（400×400） | 肩から上、両肩と胸元の素肌が露出した構図（衣服が見えない） |
+| ヘッダー（1500×500） | 背中・肩・脚の素肌が大きく写り、ずり下がったフリルのトップスという構図 |
+| 投稿画像 | 2026 年は 1 日 2〜3 回の予約投稿 × 2 枚組（例: 3/20 に 02:00 / 06:00 / 12:00 の 3 投稿 6 枚）。水着・スク水・パンチラ系の題材が pixiv 側の作品名にも並ぶ。1 日 3 件以上が「作者ラベル」の発火条件 |
+| テキスト・リンク | 自己紹介に「R18作品はPIXIV、PATREONで投稿」と Patreon 直リンク。70 投稿中 4 件が「〜えっち_sample」「Patreon」等の R-18 告知 |
+| フォロワー構成 | R-18 販売（PicSpace / Patreon）の導線があるため、`nsfw_consumer_follower_score` が高くなりやすい |
+| 年齢感 | アイコン・ヘッダーのキャラが幼く見える造形で、肌露出との組み合わせは成人向け判定・規約上のリスクが最も高い |
+
+**対処の優先順位（効果が出る順）**
+
+1. **アイコンとヘッダーを今日中に差し替える**（顔中心・衣服あり・肩や背中の素肌を出さない）。`NsfwAvatarImage` / `NsfwBannerImage` は画像を変えない限り残る。
+2. **2 週間、画像投稿は 1 日 2 件以内**にし、肌露出の少ない題材（制服・私服・秋服）に限定する。自動付与のアカウントラベルは 7 日期限なので、再発火させなければ約 1 週間で切れる。
+3. 自己紹介から「R18」「Patreon」を外し、R-18 告知投稿を削除または非公開化する（テキストスコアと導線の遮断）。R-18 はサブ垢 @mizukin_sub に完全移管。
+4. 「センシティブなメディアとしてマーク」は本垢では ON にしない。
+5. 毎週、チェッカーの Search Suggestion Ban と `tools/check_embed.py`（新規投稿）で解除を確認する。Under the Hood の 8 月分（9/10〜）・9 月分（10/10〜）で `NsfwAvatarImage` / `NsfwBannerImage` / `NsfwHighRecall` の有効日数を確認し、`NsfwAdmin`（通報起点・自動では切れない）が出ていれば異議申し立てを行う。
+
 ---
 
 ## 4. 投稿 70 件の分析
