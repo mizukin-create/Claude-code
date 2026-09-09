@@ -108,9 +108,16 @@ X の公式 oEmbed API（`publish.twitter.com/oembed?url=…`）に投稿 URL �
 | @mi_Create_mi 2025-06-15 の画像なし投稿（Booth 告知） | 正常（HTML が返る） |
 | 対照: @kumattoforest の画像投稿 | 正常 |
 
-公開コードでは、この応答は `sensitive_viewer_logged_out`（`visibility-filtering/rules/tweet_rules.rs`）に対応する: **メディア付き かつ（NSFW_HIGH_PRECISION / NSFW_HIGH_RECALL ラベル または 投稿の nsfw フラグ）** の投稿は、ログアウト・未成年・年齢未設定の閲覧者に Drop される。投稿の nsfw フラグ（`tes_hydrator.rs` の `get_nsfw_user`）は、作者の設定 `user.safety.nsfw_user`（「投稿するメディアをセンシティブな内容としてマーク」）を投稿時に引き継ぐもので、作者側の同じ値が `author.is_nsfw_user`（`gizmoduck_hydrator.rs`）として For You 圏外枠の `DropNsfwUserAuthorRule` にも使われる。**画像なし投稿は表示され、画像付きは全年齢の絵でも一律に遮断される**というパターンは、投稿ごとの自動判定より、この作者設定（または運営付与の `nsfw_admin`）と整合する。
+公開コードでは、この応答は `sensitive_viewer_logged_out`（`visibility-filtering/rules/tweet_rules.rs`）に対応する: **メディア付き かつ（NSFW_HIGH_PRECISION / NSFW_HIGH_RECALL ラベル または 投稿の nsfw フラグ）** の投稿は、ログアウト・未成年・年齢未設定の閲覧者に Drop される。投稿の nsfw フラグ（`tes_hydrator.rs` の `get_nsfw_user`）は、作者の設定 `user.safety.nsfw_user`（「投稿するメディアをセンシティブな内容としてマーク」）を投稿時に引き継ぐもので、作者側の同じ値が `author.is_nsfw_user`（`gizmoduck_hydrator.rs`）として For You 圏外枠の `DropNsfwUserAuthorRule` にも使われる。**画像なし投稿は表示され、画像付きは全年齢の絵でも一律に遮断される**というパターンは、作者単位の状態（設定・ラベル・運営フラグ）と整合する。
 
-（FxTwitter API が返す `possibly_sensitive: false` は別経路の値で、公式 API の応答と食い違う。公式側を優先する。）
+**2026-09-10 の訂正**: 本人の設定画面（「あなたのポスト」）で「ポストするメディアをセンシティブな内容を含むものとして設定する」が **OFF** であることを確認した。取得できた 70 投稿は FxTwitter API の `possibly_sensitive` が全件 false で、これは投稿時に引き継がれる利用者フラグ（`tweet_features.nsfw.user`）が立っていないことと整合する（当初「食い違う」と書いたのは誤りで、両者は別の値を見ている）。したがって `is_nsfw_flagged()`（`models/mod.rs`: 作者の `is_nsfw_user` / `is_nsfw_admin` または投稿の `nsfw.user` / `nsfw.admin`）のうち利用者由来の 2 つは除外でき、残る原因は次の 2 つに絞られる。
+
+| 残る原因 | 仕組み | 見分け方 |
+|---|---|---|
+| A. 投稿画像ごとの分類器ラベル `NSFW_HIGH_RECALL` / `NSFW_HIGH_PRECISION` | `NsfwTweetMediaProcessor.bot` が画像ごとに付与。`pnsfwmedia` は作者スコア（agatha・テキスト・フォロワー構成）も入力にするため、アカウント側のスコアが高いと全年齢の絵も高再現側に入りやすい（§3.6 の経路 1・3） | Under the Hood の投稿ラベル欄に NSFW_HIGH_RECALL / NSFW_HIGH_PRECISION の件数と割合が出る |
+| B. 運営付与の `nsfw_admin`（アカウント）または投稿単位の `nsfw.admin` | 通報を受けて「成人向けを主に投稿する」と判定されたアカウント。自動では切れない | Under the Hood のアカウントラベル欄に **NsfwAdmin**、投稿ラベル欄に NSFW_ADMIN が出る |
+
+2025-06-15 以降の画像投稿が syndication API でも全件見えない（§3.1）ので、A なら「ほぼ全件がラベル付き」、B なら「アカウント単位」で、どちらも 7 日期限の作者ラベルより持続的な状態。**8 月分の Under the Hood（9/10 09:00 JST 以降）で A / B を判別する**のが次の確認になる。
 
 同じ確認は `python3 tools/check_embed.py <投稿URL>` で再実行できる（OK / RESTRICTED / NOT_FOUND を表示）。設定を変えた後も**過去の投稿はフラグを持ったまま**なので、新しい画像投稿で OK になるかを見る。
 
@@ -131,7 +138,7 @@ x.com/i/under_the_hood は、月ごとに「自分の投稿・アカウントに
 
 ### 3.5 確認と対処
 
-1. **設定 → プライバシーと安全 → 表示するコンテンツ／投稿するメディア**で「センシティブな内容を含むメディアとしてマーク」を確認し、本垢では OFF にする（ON なら `is_nsfw_user` に相当し、Under the Hood には表示されない）。
+1. **設定 → プライバシーと安全 → あなたのポスト**の「ポストするメディアをセンシティブな内容を含むものとして設定する」を確認し、本垢では OFF にする（ON なら `is_nsfw_user` に相当し、Under the Hood には表示されない）。**→ 2026-09-10 に OFF を確認済み**（§3.3 の訂正）。
 2. 変更後に画像を 1 枚投稿し、`python3 tools/check_embed.py <その投稿URL>` が OK になるか確認する。過去の画像投稿は RESTRICTED のまま残る（フラグは投稿時に固定）。
 3. **Under the Hood** で 8 月分（9/10 以降）・9 月分（10/10 以降）のレポートを確認する。9 月に適格投稿 10 件以上（カレンダーの 20 投稿で満たす）が条件。`NsfwAdmin` / `NsfwHighPrecision` 系が出たら、全年齢作品だけを一定期間投稿して解除を待つか、異議申し立てをする。
 4. 本垢のアイコン・ヘッダーは肌面積の少ない画像にする（`NsfwAvatarImageRule` / `NsfwBannerImageRule`）。
@@ -179,19 +186,19 @@ x.com/i/under_the_hood は、月ごとに「自分の投稿・アカウントに
 4. 「センシティブなメディアとしてマーク」は本垢では ON にしない。
 5. 毎週、チェッカーの Search Suggestion Ban と `tools/check_embed.py`（新規投稿）で解除を確認する。Under the Hood の 8 月分（9/10〜）・9 月分（10/10〜）で `NsfwAvatarImage` / `NsfwBannerImage` / `NsfwHighRecall` の有効日数を確認し、`NsfwAdmin`（通報起点・自動では切れない）が出ていれば異議申し立てを行う。
 
-**実施状況（2026-09-10 07:45 JST 時点）**
+**実施状況（2026-09-10 07:56 JST 時点）**
 
 | 優先順位 | 状況 | 確認 |
 |---|---|---|
 | 1. アイコン・ヘッダー | **実施済み**（2026-09-10 07:39 JST にアップロード。顔中心・衣服あり・素肌露出なし。§2.1 参照） | FxTwitter API の画像 URL と snowflake 時刻、画像の目視 |
 | 2. 画像投稿 1 日 2 件以内・露出の少ない題材 | これから 2 週間（〜9/24） | 投稿履歴 |
-| 3. 自己紹介の R18 / Patreon | **実施済み**（語とリンクを削除、ウェブサイト欄は pixiv）。**R-18 告知投稿 3 件は残存**: 1962879506659918020（久川凪_ホテルえっち_sample）、1997611160238166255（Patreon 投稿リンク）、2003417829186650431（音乃瀬奏_えっち_sample）— いずれも画像なしで oEmbed は OK | `tools/check_embed.py` |
-| 4. 「センシティブなメディアとしてマーク」を ON にしない | 本人の設定画面で未確認（プライバシーと安全 → あなたの投稿） | — |
+| 3. 自己紹介の R18 / Patreon、R-18 告知投稿 | **実施済み**（語とリンクを削除、ウェブサイト欄は pixiv）。R-18 告知投稿 3 件（1962879506659918020 久川凪_ホテルえっち_sample、1997611160238166255 Patreon 投稿リンク、2003417829186650431 音乃瀬奏_えっち_sample）は 07:45 JST 時点では残存していたが、**07:56 JST の再確認で全件 NOT_FOUND（削除済み）** | `tools/check_embed.py` |
+| 4. 「センシティブなメディアとしてマーク」を ON にしない | **OFF を確認**（2026-09-10、「あなたのポスト」画面。「ポストを非公開にする」「動画を保護する」も OFF、タグ付け許可は「すべてのアカウント」で、可視性に関わる設定は他にない） | 本人のスクリーンショット |
 | 5. 週次確認 | 次回 9/16〜17 | チェッカー、`check_embed.py`（新規画像投稿）、Under the Hood 8 月分（9/10 09:00 JST 以降） |
 
 差し替え直後の確認: 過去の画像投稿（2037877591366144317、2021509674806464852）は引き続き RESTRICTED、画像なし投稿（1934207689296642049）は OK。投稿単位のラベル・フラグは投稿時に確定して残るため想定どおりで、**解除の判定は差し替え後の新規画像投稿で行う**。syndication API は 429（レート制限）で再取得できず。
 
-見込み: 1 日 3 件条件で付く作者ラベルは 7 日期限なので、再発火させなければ 9/16 頃に切れる。`NsfwAvatarImage` / `NsfwBannerImage` の再評価タイミングは公開コードに記載がない（画像変更時に再判定されると推測）。`agatha` は直近 30 日のラベルを正例に使うため、アカウント側のスコアが落ち着くまでは最長 1 か月程度を見込む（推測）。
+見込み: 1 日 3 件条件で付く作者ラベルは 7 日期限なので、再発火させなければ 9/16 頃に切れる。`NsfwAvatarImage` / `NsfwBannerImage` の再評価タイミングは公開コードに記載がない（画像変更時に再判定されると推測）。`agatha` は直近 30 日のラベルを正例に使うため、アカウント側のスコアが落ち着くまでは最長 1 か月程度を見込む（推測）。 設定が OFF と確認できたことで、過去の画像投稿の RESTRICTED は投稿ごとの分類器ラベル（A）か運営フラグ（B）に絞られた（§3.3 の訂正）。A なら新規投稿の画像内容とアカウントスコアの回復で改善し、B なら異議申し立てが必要になる。
 
 ---
 

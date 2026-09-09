@@ -61,10 +61,13 @@ X の公式 oEmbed API で、投稿が「ログアウト閲覧者に表示でき
 
 ```bash
 python3 tools/check_embed.py https://x.com/<user>/status/<id> [URL ...]
+python3 tools/check_embed.py --detail https://x.com/<user>/status/<id>   # FxTwitter API の possibly_sensitive も表示
 ```
 
 - `OK`: 埋め込み HTML が返る（制限なし）
-- `RESTRICTED`: `Sorry, you are not authorized to see this status.` — メディア付きで NSFW ラベルか投稿の nsfw フラグ（作者の「センシティブなメディアとしてマーク」設定を投稿時に引き継ぐ）がある投稿への応答
+- `RESTRICTED`: `Sorry, you are not authorized to see this status.` — 公開コードの `sensitive_viewer_logged_out` では「メディア付き かつ（NSFW_HIGH_PRECISION / NSFW_HIGH_RECALL ラベル、または 作者の `nsfw_user` / `nsfw_admin`、投稿の `nsfw.user` / `nsfw.admin`）」の投稿への応答
 - `NOT_FOUND`: 削除・非公開・URL 誤り
 
-画像なし投稿が OK で画像付きが RESTRICTED なら、設定かアカウントラベルが原因。設定変更後は新しい投稿で確認する（過去投稿のフラグは残る）。
+`--detail` の `sensitive=True` は投稿の利用者フラグ（投稿時の「センシティブなメディアとしてマーク」設定か、投稿ごとの内容警告）。`sensitive=False` で RESTRICTED なら、原因は分類器の投稿ラベルか運営フラグで、Under the Hood（x.com/i/under_the_hood）の投稿ラベル欄（NSFW_HIGH_RECALL / NSFW_HIGH_PRECISION / NSFW_ADMIN）とアカウントラベル欄（NsfwAdmin）で見分ける。
+
+画像なし投稿が OK で画像付きが RESTRICTED なら、作者単位の状態が原因。設定変更後は新しい投稿で確認する（過去投稿のラベル・フラグは残る）。
