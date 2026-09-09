@@ -117,7 +117,11 @@ X の公式 oEmbed API（`publish.twitter.com/oembed?url=…`）に投稿 URL �
 | A. 投稿画像ごとの分類器ラベル `NSFW_HIGH_RECALL` / `NSFW_HIGH_PRECISION` | `NsfwTweetMediaProcessor.bot` が画像ごとに付与。`pnsfwmedia` は作者スコア（agatha・テキスト・フォロワー構成）も入力にするため、アカウント側のスコアが高いと全年齢の絵も高再現側に入りやすい（§3.6 の経路 1・3） | Under the Hood の投稿ラベル欄に NSFW_HIGH_RECALL / NSFW_HIGH_PRECISION の件数と割合が出る |
 | B. 運営付与の `nsfw_admin`（アカウント）または投稿単位の `nsfw.admin` | 通報を受けて「成人向けを主に投稿する」と判定されたアカウント。自動では切れない | Under the Hood のアカウントラベル欄に **NsfwAdmin**、投稿ラベル欄に NSFW_ADMIN が出る |
 
-2025-06-15 以降の画像投稿が syndication API でも全件見えない（§3.1）ので、A なら「ほぼ全件がラベル付き」、B なら「アカウント単位」で、どちらも 7 日期限の作者ラベルより持続的な状態。**8 月分の Under the Hood（9/10 09:00 JST 以降）で A / B を判別する**のが次の確認になる。
+2025-06-15 以降の画像投稿が syndication API でも全件見えない（§3.1）ので、A なら「ほぼ全件がラベル付き」、B なら「アカウント単位」で、どちらも 7 日期限の作者ラベルより持続的な状態。判別の手段は 3 つある。
+
+1. **フォロワー視点の警告表示（今日できる）**。公開コードでは Home（フォロー中）でも `NsfwHighPrecisionInterstitialRule`（投稿の NSFW_HIGH_PRECISION ラベル）と `NsfwAuthorInterstitialRule`（作者の `nsfw_user` / `nsfw_admin` フラグ ＋ メディアあり）が「センシティブな内容を含む可能性のあるメディア」の警告を出す（`registry.rs` の `TIMELINE_HOME_SHARED_RULES`。作者本人と、「センシティブな内容を含む可能性のあるメディアを表示する」を ON にした閲覧者は除外 `rule_spec.rs`）。NSFW_HIGH_RECALL は警告を出さず、圏外推薦からの除外とログアウト閲覧者への非表示だけ。したがって、サブ垢（同設定 OFF、本垢をフォロー）の Home で本垢の画像投稿に**警告が出なければ B は否定**され、原因は HIGH_RECALL ラベル（A の弱い側）に絞られる。全年齢の絵まで全件に警告が出るなら `nsfw_admin`（B）か HIGH_PRECISION（A の強い側）。
+2. 差し替え後の新規画像投稿を `tools/check_embed.py --detail` で確認する。OK が出れば B は否定（`nsfw_admin` は全メディア投稿を一律に遮断する）。
+3. **Under the Hood**。ただし **8 月は適格投稿が 10 件未満（本人確認 2026-09-10）のため 8 月分は生成されず**、次は 9 月分（10/10 09:00 JST 以降）。条件は `postCount >= minimumEligiblePosts`（10 件ちょうどで可、`underTheHoodReport.User.strato`）、適格投稿は `shareSourceTweetId` なし・nullcast でない投稿で**返信も数える**（`UthDailyPostsJob.scala`）、日付は UTC。
 
 同じ確認は `python3 tools/check_embed.py <投稿URL>` で再実行できる（OK / RESTRICTED / NOT_FOUND を表示）。設定を変えた後も**過去の投稿はフラグを持ったまま**なので、新しい画像投稿で OK になるかを見る。
 
@@ -127,7 +131,7 @@ x.com/i/under_the_hood は、月ごとに「自分の投稿・アカウントに
 
 | 項目 | 仕様 |
 |---|---|
-| 対象月 | 前月。ただし**前月末（UTC）から 10 日経過するまでは前々月**（`minDaysAfterMonthEnd = 10`）。2026-09-09（JST）時点で「July 2026」と出るのはこのため。**8 月分は 2026-09-10 09:00 JST 以降**に切り替わる（集計側は投稿後 7 日間の観測完了 `postObservationDays = 7` が必要） |
+| 対象月 | 前月。ただし**前月末（UTC）から 10 日経過するまでは前々月**（`minDaysAfterMonthEnd = 10`）。2026-09-09（JST）時点で「July 2026」と出るのはこのため。**8 月分は 2026-09-10 09:00 JST 以降**に切り替わる（本垢は 8 月の適格投稿が 10 件未満のため 8 月分は生成されず、条件の表示だけになる）（集計側は投稿後 7 日間の観測完了 `postObservationDays = 7` が必要） |
 | 条件 1「10 or more posts in the prior month」 | その月の**適格投稿が 10 件以上**。適格投稿 = リポストでない（`shareSourceTweetId` なし）かつ nullcast でない投稿。**返信も数える**。編集済み投稿は 1 件。件数不足だとレポート JSON は生成されず、条件の表示だけになる |
 | 条件 2「Account at least 1 year old」 | 作成から 365 日以上（@mi_Create_mi は 2022-12 開設で満たす） |
 | 投稿ラベル（件数と割合） | NSFW_HIGH_RECALL / NSFW_HIGH_PRECISION / NSFW_TEXT / NSFW_CARD_IMAGE / NSFW_ADMIN / GORE_AND_VIOLENCE_HIGH_PRECISION / SPAM_HIGH_RECALL / SPAM / MALICIOUS_URL / DO_NOT_AMPLIFY / PDNA / BOUNCE / FOSNR_* など。各ラベルに「about（付与理由）」「effect（可視性への影響）」の説明文が付く |
@@ -140,7 +144,7 @@ x.com/i/under_the_hood は、月ごとに「自分の投稿・アカウントに
 
 1. **設定 → プライバシーと安全 → あなたのポスト**の「ポストするメディアをセンシティブな内容を含むものとして設定する」を確認し、本垢では OFF にする（ON なら `is_nsfw_user` に相当し、Under the Hood には表示されない）。**→ 2026-09-10 に OFF を確認済み**（§3.3 の訂正）。
 2. 変更後に画像を 1 枚投稿し、`python3 tools/check_embed.py <その投稿URL>` が OK になるか確認する。過去の画像投稿は RESTRICTED のまま残る（フラグは投稿時に固定）。
-3. **Under the Hood** で 8 月分（9/10 以降）・9 月分（10/10 以降）のレポートを確認する。9 月に適格投稿 10 件以上（カレンダーの 20 投稿で満たす）が条件。`NsfwAdmin` / `NsfwHighPrecision` 系が出たら、全年齢作品だけを一定期間投稿して解除を待つか、異議申し立てをする。
+3. **Under the Hood** は 9 月分（10/10 09:00 JST 以降）を確認する（8 月は適格投稿 10 件未満で生成されない。本人確認 9/10）。9 月に適格投稿 10 件以上（リポスト以外、返信も数える、UTC 日付。カレンダーの投稿で満たす）が条件。それまでは §3.3 の 1・2 で暫定判別する。`NsfwAdmin` / `NsfwHighPrecision` 系が出たら、全年齢作品だけを一定期間投稿して解除を待つか、異議申し立てをする。
 4. 本垢のアイコン・ヘッダーは肌面積の少ない画像にする（`NsfwAvatarImageRule` / `NsfwBannerImageRule`）。
 5. R-18 の告知（pixiv / Patreon リンク付き投稿）を本垢から無くし、サブ垢に完全移管する。本垢のプロフィールからも R-18 の文言と Patreon 直リンクを外し、固定ポストか PicSpace の全年齢ページに一本化する。
 6. 対処後 2 週間で、X アナリティクスの「インプレッション（フォロワー外）」の比率が上がるかを見る。
@@ -184,7 +188,7 @@ x.com/i/under_the_hood は、月ごとに「自分の投稿・アカウントに
 2. **2 週間、画像投稿は 1 日 2 件以内**にし、肌露出の少ない題材（制服・私服・秋服）に限定する。自動付与のアカウントラベルは 7 日期限なので、再発火させなければ約 1 週間で切れる。
 3. 自己紹介から「R18」「Patreon」を外し、R-18 告知投稿を削除または非公開化する（テキストスコアと導線の遮断）。R-18 はサブ垢 @mizukin_sub に完全移管。
 4. 「センシティブなメディアとしてマーク」は本垢では ON にしない。
-5. 毎週、チェッカーの Search Suggestion Ban と `tools/check_embed.py`（新規投稿）で解除を確認する。Under the Hood の 8 月分（9/10〜）・9 月分（10/10〜）で `NsfwAvatarImage` / `NsfwBannerImage` / `NsfwHighRecall` の有効日数を確認し、`NsfwAdmin`（通報起点・自動では切れない）が出ていれば異議申し立てを行う。
+5. 毎週、チェッカーの Search Suggestion Ban と `tools/check_embed.py`（新規投稿）で解除を確認する。Under the Hood の 9 月分（10/10〜。8 月分は適格投稿不足で出ない）で `NsfwAvatarImage` / `NsfwBannerImage` / `NsfwHighRecall` の有効日数を確認し、`NsfwAdmin`（通報起点・自動では切れない）が出ていれば異議申し立てを行う。
 
 **実施状況（2026-09-10 07:56 JST 時点）**
 
@@ -194,7 +198,7 @@ x.com/i/under_the_hood は、月ごとに「自分の投稿・アカウントに
 | 2. 画像投稿 1 日 2 件以内・露出の少ない題材 | これから 2 週間（〜9/24） | 投稿履歴 |
 | 3. 自己紹介の R18 / Patreon、R-18 告知投稿 | **実施済み**（語とリンクを削除、ウェブサイト欄は pixiv）。R-18 告知投稿 3 件（1962879506659918020 久川凪_ホテルえっち_sample、1997611160238166255 Patreon 投稿リンク、2003417829186650431 音乃瀬奏_えっち_sample）は 07:45 JST 時点では残存していたが、**07:56 JST の再確認で全件 NOT_FOUND（削除済み）** | `tools/check_embed.py` |
 | 4. 「センシティブなメディアとしてマーク」を ON にしない | **OFF を確認**（2026-09-10、「あなたのポスト」画面。「ポストを非公開にする」「動画を保護する」も OFF、タグ付け許可は「すべてのアカウント」で、可視性に関わる設定は他にない） | 本人のスクリーンショット |
-| 5. 週次確認 | 次回 9/16〜17 | チェッカー、`check_embed.py`（新規画像投稿）、Under the Hood 8 月分（9/10 09:00 JST 以降） |
+| 5. 週次確認 | 次回 9/16〜17。**8 月分の Under the Hood は適格投稿 10 件未満で出ない（本人確認 9/10）ため、9 月分（10/10〜）までは、サブ垢の Home での警告表示の有無と新規投稿の `check_embed.py --detail` で判別する（§3.3）** | チェッカー、`check_embed.py`、サブ垢の Home |
 
 差し替え直後の確認: 過去の画像投稿（2037877591366144317、2021509674806464852）は引き続き RESTRICTED、画像なし投稿（1934207689296642049）は OK。投稿単位のラベル・フラグは投稿時に確定して残るため想定どおりで、**解除の判定は差し替え後の新規画像投稿で行う**。syndication API は 429（レート制限）で再取得できず。
 
