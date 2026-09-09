@@ -54,3 +54,17 @@ python3 tools/test_prompt_lint.py
 - 投稿数は取得時点のスナップショット。Danbooru 本体（danbooru.donmai.us）の API は Cloudflare 保護のため本ツールからは参照しない。
 - 75 トークン分割は A1111 の `comma_padding_backtrack=20` を「要素の手前で改チャンク」に単純化した近似。ComfyUI（`CLIPTextEncode`）はデフォルトで同様の 77 トークン分割を行うが、A1111 とは境界の扱いが少し異なる。
 - Anima 側のトークン数（Qwen3 トークナイザ）は厳密には数えず、語数で 512 トークン基準の超過だけを警告する。
+
+## check_embed.py
+
+X の公式 oEmbed API で、投稿が「ログアウト閲覧者に表示できる状態か」を確認する（`report/06` §3.3）。
+
+```bash
+python3 tools/check_embed.py https://x.com/<user>/status/<id> [URL ...]
+```
+
+- `OK`: 埋め込み HTML が返る（制限なし）
+- `RESTRICTED`: `Sorry, you are not authorized to see this status.` — メディア付きで NSFW ラベルか投稿の nsfw フラグ（作者の「センシティブなメディアとしてマーク」設定を投稿時に引き継ぐ）がある投稿への応答
+- `NOT_FOUND`: 削除・非公開・URL 誤り
+
+画像なし投稿が OK で画像付きが RESTRICTED なら、設定かアカウントラベルが原因。設定変更後は新しい投稿で確認する（過去投稿のフラグは残る）。

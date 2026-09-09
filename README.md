@@ -6,7 +6,7 @@ Illustrious（SD WebUI）と Anima（ComfyUI）で 2 次元美少女イラスト
 
 ## まず読む
 - **[report/00_summary_and_proposal.md](report/00_summary_and_proposal.md)** — 結論と提案（コンテンツ戦略・プロンプト戦略・ワークフロー・X 運用・30 日プラン）。冒頭に第 2 回の更新点。
-- **[report/06_x_post_analysis.md](report/06_x_post_analysis.md)** — @mi_Create_mi の実投稿 70 件と同業 15 アカウント 1,239 件の分析。**本垢のメディア投稿が埋め込み API で表示不可になっている**発見と対処。
+- **[report/06_x_post_analysis.md](report/06_x_post_analysis.md)** — @mi_Create_mi の実投稿 70 件と同業 15 アカウント 1,239 件の分析。**本垢の画像投稿が公式 oEmbed API で「not authorized」になっている**発見、その仕組み（公開コード）、Under the Hood レポートの仕様と読み方、対処。
 
 ## 調査レポート（事実と出典）
 | # | ファイル | 内容 |
@@ -30,6 +30,7 @@ Illustrious（SD WebUI）と Anima（ComfyUI）で 2 次元美少女イラスト
 | [prompts/ab_test_protocol.md](prompts/ab_test_protocol.md) | **新規**: 生成側の X/Y/Z plot 手順と採点表、投稿側の 2 週間 A/B 手順 |
 | [prompts/wildcards/](prompts/wildcards/) | Dynamic Prompts 用ワイルドカード（光・画角・表情・衣装・季節・様式・髪型）— 全行を正規表記に更新 |
 | [tools/prompt_lint.py](tools/prompt_lint.py) | **新規**: プロンプト検証・変換 CLI。Danbooru 実在/別名/投稿数、CLIP 75 トークン境界、モデル別ルール、Illustrious⇄Anima 変換（[tools/README.md](tools/README.md)） |
+| [tools/check_embed.py](tools/check_embed.py) | **新規**: X の公式 oEmbed API で投稿の表示制限（RESTRICTED / OK）を確認。設定変更後の効果確認に使う（06 §3.3） |
 | [workflows/anima_t2i_hires.json](workflows/anima_t2i_hires.json) | ComfyUI 用 Anima ワークフロー: txt2img → 1.25x 2nd pass → 2x ESRGAN（`build_anima_workflow.py` で再生成） |
 | [workflows/anima_to_illustrious_2stage.json](workflows/anima_to_illustrious_2stage.json) | **新規**: 二段構成ワークフロー: Anima（構図）→ pixel 受け渡し → Illustrious img2img ＋ ControlNet tile → 2x（`build_two_stage_workflow.py` で再生成） |
 

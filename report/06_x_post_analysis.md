@@ -87,13 +87,46 @@ x-algorithm の可視性フィルタ（2026-08-13 に公開された `visibility
 
 埋め込み API の tombstone は「メディアの表示制限」を反映していると考えるのが自然で、**作者単位の設定またはラベル**が本垢に付いている可能性が高い。ただし X の内部状態は外から確定できないので、次の手順で確認する。
 
-### 3.3 確認と対処
+### 3.3 公式 oEmbed API での直接確認（2026-09-09 追記）
 
-1. **設定 → プライバシーと安全 → 表示するコンテンツ／投稿するメディア**で「センシティブな内容を含むメディアとしてマーク」を確認し、本垢では OFF にする（ON なら `is_nsfw_user` に相当）。
-2. **Under the Hood**（https://x.com/i/under_the_hood、2026-08 公開の透明性ツール）で、自分のアカウントと投稿に付いている可視性ラベルの集計を確認する。`NsfwAdmin` 系のラベルが見えたら、全年齢作品だけを一定期間投稿して解除を待つか、サポートに問い合わせる。
-3. 本垢のアイコン・ヘッダーは肌面積の少ない画像にする（`NsfwAvatarImageRule` / `NsfwBannerImageRule`）。
-4. R-18 の告知（pixiv / Patreon リンク付き投稿）を本垢から無くし、サブ垢に完全移管する。本垢のプロフィールからも R-18 の文言と Patreon 直リンクを外し、固定ポストか PicSpace の全年齢ページに一本化する。
-5. 対処後 2 週間で、X アナリティクスの「インプレッション（フォロワー外）」と、埋め込み API（`publish.twitter.com/oembed?url=投稿URL`）で画像投稿が表示されるかを再確認する。
+X の公式 oEmbed API（`publish.twitter.com/oembed?url=…`）に投稿 URL を渡すと、ログアウト閲覧者に表示できる投稿は埋め込み HTML を返し、表示できない投稿はエラーを返す。結果:
+
+| 投稿 | 応答 |
+|---|---|
+| @mi_Create_mi 2026-03-28 の画像 2 枚（2,840 いいね） | `"Sorry, you are not authorized to see this status."` |
+| @mi_Create_mi 2026-02-11 18:00 の画像 2 枚（358 いいね） | 同上 |
+| @mi_Create_mi 2025-06-15 の画像なし投稿（Booth 告知） | 正常（HTML が返る） |
+| 対照: @kumattoforest の画像投稿 | 正常 |
+
+公開コードでは、この応答は `sensitive_viewer_logged_out`（`visibility-filtering/rules/tweet_rules.rs`）に対応する: **メディア付き かつ（NSFW_HIGH_PRECISION / NSFW_HIGH_RECALL ラベル または 投稿の nsfw フラグ）** の投稿は、ログアウト・未成年・年齢未設定の閲覧者に Drop される。投稿の nsfw フラグ（`tes_hydrator.rs` の `get_nsfw_user`）は、作者の設定 `user.safety.nsfw_user`（「投稿するメディアをセンシティブな内容としてマーク」）を投稿時に引き継ぐもので、作者側の同じ値が `author.is_nsfw_user`（`gizmoduck_hydrator.rs`）として For You 圏外枠の `DropNsfwUserAuthorRule` にも使われる。**画像なし投稿は表示され、画像付きは全年齢の絵でも一律に遮断される**というパターンは、投稿ごとの自動判定より、この作者設定（または運営付与の `nsfw_admin`）と整合する。
+
+（FxTwitter API が返す `possibly_sensitive: false` は別経路の値で、公式 API の応答と食い違う。公式側を優先する。）
+
+同じ確認は `python3 tools/check_embed.py <投稿URL>` で再実行できる（OK / RESTRICTED / NOT_FOUND を表示）。設定を変えた後も**過去の投稿はフラグを持ったまま**なので、新しい画像投稿で OK になるかを見る。
+
+### 3.4 「Under the Hood」レポートの仕様（公開コード `under-the-hood/` より）
+
+x.com/i/under_the_hood は、月ごとに「自分の投稿・アカウントに付いた可視性ラベル」の集計を出す。配信側の判定は `strato/columns/underTheHoodReport.User.strato`:
+
+| 項目 | 仕様 |
+|---|---|
+| 対象月 | 前月。ただし**前月末（UTC）から 10 日経過するまでは前々月**（`minDaysAfterMonthEnd = 10`）。2026-09-09（JST）時点で「July 2026」と出るのはこのため。**8 月分は 2026-09-10 09:00 JST 以降**に切り替わる（集計側は投稿後 7 日間の観測完了 `postObservationDays = 7` が必要） |
+| 条件 1「10 or more posts in the prior month」 | その月の**適格投稿が 10 件以上**。適格投稿 = リポストでない（`shareSourceTweetId` なし）かつ nullcast でない投稿。**返信も数える**。編集済み投稿は 1 件。件数不足だとレポート JSON は生成されず、条件の表示だけになる |
+| 条件 2「Account at least 1 year old」 | 作成から 365 日以上（@mi_Create_mi は 2022-12 開設で満たす） |
+| 投稿ラベル（件数と割合） | NSFW_HIGH_RECALL / NSFW_HIGH_PRECISION / NSFW_TEXT / NSFW_CARD_IMAGE / NSFW_ADMIN / GORE_AND_VIOLENCE_HIGH_PRECISION / SPAM_HIGH_RECALL / SPAM / MALICIOUS_URL / DO_NOT_AMPLIFY / PDNA / BOUNCE / FOSNR_* など。各ラベルに「about（付与理由）」「effect（可視性への影響）」の説明文が付く |
+| アカウントラベル（有効日数と割合） | NsfwHighRecall / NsfwHighPrecision / NsfwNearPerfect / NsfwAvatarImage / NsfwBannerImage / **NsfwAdmin**（通報を受けて成人向けを主に投稿すると判定）/ SpamHighRecall / Compromised / ReadOnly / ImpersonationHighPrecision / AbusiveHighRecall / DoNotAmplify |
+| **載らないもの** | 作者自身の「センシティブなメディアとしてマーク」設定（`nsfw_user`）。集計対象のフラグは `nsfwAdmin` のみ（`GizmoduckSafetyFlags.scala`）。この設定は設定画面でしか確認できない |
+
+読み方: NSFW 系のアカウントラベルは「フォローしていない人への推薦から除外」、NsfwAdmin と NSFW_HIGH_PRECISION は加えて「警告表示、未成年・年齢未設定・ログアウト閲覧者に非表示」が effect として明記されている。NsfwAdmin が出た場合は通報起点なので、全年齢運用に切り替えた上で help.x.com の「reach limited」「enforcement options」（レポート内の注記のリンク）から異議申し立てを行う。
+
+### 3.5 確認と対処
+
+1. **設定 → プライバシーと安全 → 表示するコンテンツ／投稿するメディア**で「センシティブな内容を含むメディアとしてマーク」を確認し、本垢では OFF にする（ON なら `is_nsfw_user` に相当し、Under the Hood には表示されない）。
+2. 変更後に画像を 1 枚投稿し、`python3 tools/check_embed.py <その投稿URL>` が OK になるか確認する。過去の画像投稿は RESTRICTED のまま残る（フラグは投稿時に固定）。
+3. **Under the Hood** で 8 月分（9/10 以降）・9 月分（10/10 以降）のレポートを確認する。9 月に適格投稿 10 件以上（カレンダーの 20 投稿で満たす）が条件。`NsfwAdmin` / `NsfwHighPrecision` 系が出たら、全年齢作品だけを一定期間投稿して解除を待つか、異議申し立てをする。
+4. 本垢のアイコン・ヘッダーは肌面積の少ない画像にする（`NsfwAvatarImageRule` / `NsfwBannerImageRule`）。
+5. R-18 の告知（pixiv / Patreon リンク付き投稿）を本垢から無くし、サブ垢に完全移管する。本垢のプロフィールからも R-18 の文言と Patreon 直リンクを外し、固定ポストか PicSpace の全年齢ページに一本化する。
+6. 対処後 2 週間で、X アナリティクスの「インプレッション（フォロワー外）」の比率が上がるかを見る。
 
 現状でも閲覧 1〜5 万の投稿があるのは、フォロワー（1 万人）と検索経由の到達が残っているため。**圏外推薦が戻れば同じ投稿でも到達が数倍になる余地**がある。
 
