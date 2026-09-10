@@ -184,3 +184,10 @@ KSampler(seed, steps 30-40, cfg 4-5 [Turbo: 8-12 / 1], sampler er_sde, scheduler
 15. 推しキャラは Base で LoRA 学習
 
 参考 URL（追加分）: https://comfyui-wiki.com/en/models/anima / https://comfyui.nomadoor.net/en/basic-workflows/anima/ / https://techtactician.com/anima-comfyui-quick-local-setup-guide/ / https://civitai.com/articles/26217/anima-what-is-anima / https://civitai.com/models/2458426/anima / https://huggingface.co/circlestone-labs/Anima/discussions/153 / https://github.com/sorryhyun/anima_lora / https://github.com/Sen-sou/Comfyui-Anima-Regional-Conditioning / https://github.com/hybskgks28275/ComfyUI-Anima-NAG / https://github.com/CocyNoric/ComfyUI-Anima-TeaCache / https://github.com/GumGum10/comfyui-anima-3-8B / https://raw.githubusercontent.com/comfyanonymous/ComfyUI/HEAD/comfy/text_encoders/anima.py / https://raw.githubusercontent.com/nomadoor/Kura/HEAD/workflows/samples/anima/anima-aesthetic-v1.1.json / https://note.com/yoya48/n/n6cb08878780e / https://note.com/redrayz/n/n67aebd3c6996
+
+## 9. 追記（2026-09-10）: JANIMA と画風プロンプト
+
+- **JANIMA**（Civitai 2642932、janxd）は anima-base-v1.0 のファインチューン。v1.0（2026-06-10）と、Anima-2.9B（Gazingstars123 による層拡張モデル、非公式）の新規層をマージした v1.0 2.9B（2026-09-08）がある。推奨は er_sde / CFG 5 / 24〜30 steps、品質 `masterpiece, highres, absurdres, newest, best quality, score_7`。「単一の画風を強制しない」設計で、派生 20 モデル比較でも「素直系」に分類される。**プロンプトだけで画風を振りやすい**のはこのため。生成画像は商用利用可、派生モデルは不可。
+- 2.9B 系は彩度・コントラストが高く感情表現が強い一方、色や素材の指示を誤読し、**露出寄りの衣装になりやすい**（おーら氏の同一 seed 比較）。全年齢運用では衣服タグを明示する。
+- 様式語のカタログ（年代・画材・モノクロ・配色・装飾・メタタグ、根拠つき）と置き方の規則は `prompts/anima_styles.md`、候補一覧は `prompts/wildcards/anima_style.txt`、同一 seed で 8 様式を横並びにする検証ワークフローは `workflows/anima_style_test.json`（`build_style_test_workflow.py` で再生成）。
+

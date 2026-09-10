@@ -187,6 +187,7 @@ v-pred 系（Illustrious v3.5-vpred / NoobAI-vpred / RouWei-vpred）を試すな
 - `workflows/anima_to_illustrious_2stage.json`: パイプライン C の実装（Anima Aesthetic → 4x-AnimeSharp → 1024×1536 → WAI v17 img2img denoise 0.45 ＋ ControlNet union-promax tile 0.6 → 2x）。コアノードのみ。
 - 構図固定・インペイントは ComfyUI のテンプレートブラウザにある公式「Anima Lllite: Depth Control to Image」「Any Control to Image」「Image Inpainting」を使う（ModelPatchLoader → AnimaLLLiteApply）。
 - `prompts/illustrious_templates.md` / `prompts/anima_templates.md`: 5 パターンのテンプレ（第 2 回で Danbooru 正規表記・75 トークン以内・モデルカード準拠に改訂）。
+- `prompts/anima_styles.md`、`prompts/wildcards/anima_style.txt`、`workflows/anima_style_test.json` — JANIMA の要約と Anima 系の画風プロンプトのカタログ、同一 seed 8 様式の検証ワークフロー（2026-09-10 追加）
 - `prompts/tag_dictionary_verified.md`: 推奨タグの Danbooru 投稿数付き辞典と置き換え表。
 - `prompts/character_sheet_template.md` / `prompts/post_calendar_2026-09-10.md` / `prompts/ab_test_protocol.md`: 設定シート、4 週間カレンダー、A/B 手順。
 - `prompts/wildcards/`: Dynamic Prompts 用（光・画角・表情・衣装・季節・様式・髪型）。

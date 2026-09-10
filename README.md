@@ -24,6 +24,7 @@ Illustrious（SD WebUI）と Anima（ComfyUI）で 2 次元美少女イラスト
 |---|---|
 | [prompts/illustrious_templates.md](prompts/illustrious_templates.md) | Illustrious 系のコピペ用テンプレ（5 パターン、**75 トークン以内・Danbooru 正規表記に改訂**）・モデル別品質タグ・クイックリファレンス |
 | [prompts/anima_templates.md](prompts/anima_templates.md) | Anima のコピペ用テンプレ（5 パターン）・記法の要点・**108 枚比較に基づく様式語の効く/効かない一覧** |
+| [prompts/anima_styles.md](prompts/anima_styles.md) | **新規**: JANIMA のモデルカード要約と、Anima 系で効く画風プロンプトのカタログ（年代・画材・モノクロ・配色・装飾・メタタグ、根拠つき）。候補一覧は `prompts/wildcards/anima_style.txt` |
 | [prompts/tag_dictionary_verified.md](prompts/tag_dictionary_verified.md) | **新規**: 推奨タグ 400 語超の Danbooru 投稿数付き辞典、別名・非タグの置き換え表、モデル固有タグ一覧 |
 | [prompts/character_sheet_template.md](prompts/character_sheet_template.md) | **新規**: オリキャラ設定シートと両モデル用固定プロンプト、衣装バリエーション、LoRA なし一貫性、LoRA 化 |
 | [prompts/post_calendar_2026-09-10.md](prompts/post_calendar_2026-09-10.md) | **新規**: 9/14〜10/11 の 4 週間投稿カレンダー（各枠のプロンプト・本文案）＋ハロウィン |
@@ -33,6 +34,7 @@ Illustrious（SD WebUI）と Anima（ComfyUI）で 2 次元美少女イラスト
 | [tools/check_embed.py](tools/check_embed.py) | **新規**: X の公式 oEmbed API で投稿の表示制限（RESTRICTED / OK）を確認。設定変更後の効果確認に使う（06 §3.3） |
 | [workflows/anima_t2i_hires.json](workflows/anima_t2i_hires.json) | ComfyUI 用 Anima ワークフロー: txt2img → 1.25x 2nd pass → 2x ESRGAN（`build_anima_workflow.py` で再生成） |
 | [workflows/anima_to_illustrious_2stage.json](workflows/anima_to_illustrious_2stage.json) | **新規**: 二段構成ワークフロー: Anima（構図）→ pixel 受け渡し → Illustrious img2img ＋ ControlNet tile → 2x（`build_two_stage_workflow.py` で再生成） |
+| [workflows/anima_style_test.json](workflows/anima_style_test.json) | **新規**: 同一 seed・同一本文で 8 様式を横並びにして 4×2 の一覧を出す画風テスト（JANIMA / Anima、コアノードのみ。`build_style_test_workflow.py` で再生成） |
 
 ```bash
 python3 tools/prompt_lint.py --model illustrious "1girl, solo, silver hair, violet eyes, ..., masterpiece, best quality, general"
