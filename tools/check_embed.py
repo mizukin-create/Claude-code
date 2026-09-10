@@ -17,8 +17,9 @@
   NOT_FOUND   : 削除済み・非公開・URL 誤り
 
 --detail の読み方（FxTwitter API の値。公式 API とは別経路）
-  sensitive=True  : 投稿の利用者フラグあり（投稿時の作者設定か、投稿ごとの内容警告）。設定を OFF にして新しい投稿で確認する
-  sensitive=False : 利用者フラグなし。RESTRICTED なら分類器の投稿ラベルか運営フラグが原因（Under the Hood で確認）
+  sensitive=True  : 投稿の nsfw フラグあり。作者設定・投稿ごとの内容警告のほか、X がアカウント単位で付けた状態（nsfw_admin）も
+                    投稿時に引き継がれる。作者が何もしていないのに新規投稿が全件 True なら、X 側のアカウント単位の状態
+  sensitive=False : フラグなし。RESTRICTED なら分類器の投稿ラベル（NSFW_HIGH_RECALL 等）が原因
 
 画像なし投稿が OK で画像付きが RESTRICTED なら、作者単位の状態（設定・ラベル・運営フラグ）が原因。
 設定変更後は新しい投稿で確認する（過去投稿のラベル・フラグは残る）。依存ライブラリなし（Python 3.9+）。
