@@ -35,6 +35,7 @@ Illustrious（SD WebUI）と Anima（ComfyUI）で 2 次元美少女イラスト
 | [workflows/anima_t2i_hires.json](workflows/anima_t2i_hires.json) | ComfyUI 用 Anima ワークフロー: txt2img → 1.25x 2nd pass → 2x ESRGAN（`build_anima_workflow.py` で再生成） |
 | [workflows/anima_to_illustrious_2stage.json](workflows/anima_to_illustrious_2stage.json) | **新規**: 二段構成ワークフロー: Anima（構図）→ pixel 受け渡し → Illustrious img2img ＋ ControlNet tile → 2x（`build_two_stage_workflow.py` で再生成） |
 | [workflows/anima_style_test.json](workflows/anima_style_test.json) | **新規**: 同一 seed・同一本文で 8 様式を横並びにして 4×2 の一覧を出す画風テスト（JANIMA / Anima、コアノードのみ。`build_style_test_workflow.py` で再生成） |
+| [workflows/legendaer_anima_v8_guide.md](workflows/legendaer_anima_v8_guide.md) | **新規**: JANIMA カード推奨の Legendaer 版「Anima Preview Workflow」V8（Basic / Standard / Advanced / Detailer）の使い方。必要なカスタムノードとモデル、Fast Groups Bypasser での機能 ON/OFF、初回手順、各グループの既定値 |
 
 ```bash
 python3 tools/prompt_lint.py --model illustrious "1girl, solo, silver hair, violet eyes, ..., masterpiece, best quality, general"
