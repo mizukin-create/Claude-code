@@ -1,0 +1,90 @@
+# 女キャラ：表情・視線
+re:.*smile$
+re:.*grin$
+smirk
+laughing
+happy
+open mouth
+closed mouth
+parted lips
+tongue
+tongue out
+re:^[:;>^o=x-][_.]?[)(dopc3v<]$
+:d
+:o
+:3
+:p
+:t
+;d
+;)
+;p
+>_<
+^_^
+o_o
+0_0
+@_@
+=_=
+x_x
+re:.*blush.*
+embarrassed
+shy
+nervous
+sweatdrop
+sweat
+flustered
+wavy mouth
+closed eyes
+one eye closed
+wink
+half-closed eyes
+squinting
+wide-eyed
+surprised
+shocked
+scared
+crying
+re:.*tears$
+teary eyes
+sad
+frown
+angry
+annoyed
+pout
+pouty lips
+serious
+expressionless
+empty eyes
+jitome
+glaring
+smug
+naughty face
+excited
+sleepy
+drunk
+thinking
+confused
+bored
+disgust
+crazy eyes
+heavy breathing
+seductive
+sultry
+troubled
+worried
+determined
+raised eyebrows
+furrowed brow
+clenched teeth
+grimace
+bared teeth
+biting lip
+lip bite
+licking lips
+puckered lips
+kiss
+blowing kiss
+# 視線
+re:^looking (at|away|to|up|down|ahead|afar).*$
+eye contact
+staring
+sideways glance

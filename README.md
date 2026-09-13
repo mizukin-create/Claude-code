@@ -21,6 +21,7 @@ Illustrious（SD WebUI）と Anima（ComfyUI）で 2 次元美少女イラスト
 | [prompts/anima_templates.md](prompts/anima_templates.md) | Anima のコピペ用テンプレ（5 パターン）・記法の要点・版ごとの設定 |
 | [prompts/wildcards/](prompts/wildcards/) | Dynamic Prompts 用ワイルドカード（光・画角・表情・衣装・季節・様式・髪型） |
 | [workflows/anima_t2i_hires.json](workflows/anima_t2i_hires.json) | ComfyUI 用 Anima ワークフロー（コアノードのみ）: txt2img → 1.25x 2nd pass → 2x ESRGAN。`build_anima_workflow.py` で再生成可能 |
+| [comfyui_nodes/ComfyUI-TagFormatter/](comfyui_nodes/ComfyUI-TagFormatter/) | ComfyUI カスタムノード: タグを 品質→女キャラ→女服→女表情→女ポーズ→画角→男→その他 の順に整形、キャラ要素（外見・キャラ名）の削除。辞書は txt で編集可 |
 
 ## 調査の制約
 - 調査環境から X 本体・note・pixiv・Civitai・Hugging Face・docs.comfy.org への直接アクセスが遮断されていたため、X の個別投稿は分析できず、多くは検索エンジン経由の二次情報です。X のアルゴリズムは GitHub 上の公開コード（xai-org/x-algorithm）を一次資料として確認しています。

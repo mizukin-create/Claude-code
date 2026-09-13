@@ -1,0 +1,15 @@
+# 女キャラ：人数・主題タグ（キャラ要素の削除対象にはならない）
+re:^\d\+?girls?$
+multiple girls
+solo
+solo focus
+girl
+woman
+female
+female focus
+mature female
+milf
+young girl
+teenage girl
+old woman
+everyone

@@ -1,0 +1,40 @@
+# 男タグ。単語単位（token:）で boy/male/man などを含むタグはすべてここ。
+re:^\d\+?boys?$
+token:boy
+token:boys
+token:male
+token:man
+token:men
+token:guy
+token:guys
+token:husband
+token:father
+token:dad
+token:daddy
+token:grandfather
+token:boyfriend
+token:brother
+token:son
+token:prince
+token:king
+token:shota
+token:bara
+old man
+salaryman
+policeman
+gentleman
+businessman
+ossan
+oji-san
+otoko no ko
+faceless male
+mature male
+muscular male
+beard
+mustache
+facial hair
+stubble
+goatee
+adam's apple
+chest hair
+pectorals

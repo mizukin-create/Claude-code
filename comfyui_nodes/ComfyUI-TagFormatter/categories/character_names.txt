@@ -1,0 +1,29 @@
+# キャラ名・作品名（コピーライト）。ここに書いたタグは「キャラの要素」として削除対象になります。
+# `name (series)` 形式のタグはこのリストに無くても自動でキャラ名と判定します。
+# 1行1タグ。アンダースコア/スペースどちらでも可。
+genshin impact
+blue archive
+hololive
+nijisanji
+fate/grand order
+fate (series)
+touhou
+azur lane
+arknights
+honkai: star rail
+honkai (series)
+uma musume
+vocaloid
+hatsune miku
+kantai collection
+love live!
+idolmaster
+idolmaster cinderella girls
+idolmaster shiny colors
+bang dream!
+project sekai
+princess connect!
+granblue fantasy
+fire emblem
+pokemon
+original

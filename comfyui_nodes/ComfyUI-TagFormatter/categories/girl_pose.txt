@@ -1,0 +1,132 @@
+# 女キャラ：ポーズ・動作
+standing
+sitting
+re:^sitting on .*$
+lying
+on back
+on stomach
+on side
+kneeling
+squatting
+crouching
+all fours
+seiza
+wariza
+yokozuwari
+indian style
+crossed legs
+legs together
+legs apart
+knees up
+knees together
+leaning forward
+leaning back
+re:^leaning (on|against) .*$
+arched back
+bent over
+walking
+running
+jumping
+floating
+flying
+falling
+dancing
+stretching
+sleeping
+re:^arms? .*$
+re:^hands? .*$
+re:^(own )?hands (together|clasped|on own .*)$
+crossed arms
+hand on hip
+hands on hips
+v
+double v
+peace sign
+waving
+salute
+thumbs up
+ok sign
+heart hands
+finger gun
+finger to mouth
+index finger raised
+pointing
+re:^pointing .*$
+shushing
+praying
+outstretched arm
+outstretched arms
+reaching
+reaching towards viewer
+re:^holding .*$
+holding
+carrying
+hugging
+hug
+hugging own legs
+knees to chest
+fetal position
+head tilt
+head rest
+chin rest
+re:^leg .*$
+re:^legs .*$
+straddling
+lying on
+tiptoes
+twisted torso
+contrapposto
+looking back
+looking over shoulder
+facing viewer
+facing away
+facing another
+turning around
+hair flip
+adjusting hair
+adjusting clothes
+adjusting eyewear
+hair tucking
+playing with own hair
+clothes pull
+skirt hold
+skirt lift
+dress lift
+shirt lift
+wind lift
+floating hair
+hair blowing
+fighting stance
+battle stance
+action pose
+dynamic pose
+pose
+posing
+re:.* pose$
+re:.* stance$
+cowering
+covering mouth
+covering face
+covering eyes
+covering breasts
+covering
+clenched hand
+clenched hands
+spread arms
+spread fingers
+arm support
+arm up
+arm at side
+arm behind back
+arm behind head
+arm under breasts
+between breasts
+own hands together
+paw pose
+cat pose
+w arms
+v arms
+victory pose
+raised fist
+fist
+fist pump

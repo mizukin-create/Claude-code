@@ -1,0 +1,69 @@
+# 女キャラ：衣装・装飾品・露出（アクセサリはここを外見より先に判定）
+re:^(hair|head) (ornament|ribbon|bow|flower|band|clip|tie|scrunchie|tubes|stick|bell|pin|bobbles|accessory)s?$
+hairband
+hairclip
+headband
+headdress
+headwear
+maid headdress
+re:^(?!holding |carrying |removing |wearing )(.* )?(dress|shirt|skirt|uniform|jacket|coat|sweater|hoodie|bikini|swimsuit|socks|thighhighs|kneehighs|pantyhose|legwear|shoes|boots|footwear|gloves|hat|cap|beret|ribbon|bow|scarf|necktie|bowtie|collar|choker|necklace|earrings|earring|jewelry|bracelet|ring|glasses|sunglasses|eyewear|mask|panties|bra|underwear|shorts|pants|jeans|leggings|apron|cape|cloak|armor|kimono|yukata|hakama|sash|obi|belt|bag|backpack|umbrella|hood|veil|tiara|crown|helmet|headphones|garter|corset|leotard|bodysuit|vest|cardigan|blazer|blouse|camisole|top|bottoms|sleeves|cuffs|frills|lace|clip|scrunchie|pin|badge|brooch|pendant|watch|wristband|armband|strap|costume|outfit|clothes|lingerie|bodystocking|suit|tunic|robe|gown|overalls|jumpsuit|romper|sarong|pareo|heels|sandals|sneakers|loafers|slippers|warmers|bandana|bandaid|bandage|bandages|garters|tights)$
+off shoulder
+off-shoulder
+see-through
+over-kneehighs
+hairpin
+suit
+arm warmers
+leg warmers
+school uniform
+serafuku
+sailor collar
+neckerchief
+gym uniform
+buruma
+track jacket
+sportswear
+competition swimsuit
+school swimsuit
+one-piece swimsuit
+maid
+maid apron
+nurse
+miko
+nun
+witch hat
+santa costume
+china dress
+cheongsam
+gothic lolita
+lolita fashion
+zettai ryouiki
+thigh boots
+high heels
+mary janes
+uwabaki
+barefoot
+bare legs
+bare arms
+bare shoulders
+midriff
+cleavage cutout
+sideboob
+underboob
+armpits
+shoulder cutout
+strapless
+halterneck
+turtleneck
+sweater vest
+zipper
+buttons
+pocket
+lanyard
+name tag
+id card
+wristwatch
+piercing
+ear piercing
+tattoo
+wings (costume)

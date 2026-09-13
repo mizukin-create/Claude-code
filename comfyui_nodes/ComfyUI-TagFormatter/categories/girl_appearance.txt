@@ -1,0 +1,121 @@
+# 女キャラ：外見（髪・目・肌・体型・種族など）。「キャラの要素」削除の対象。
+# --- 髪 ---
+re:.* hair$
+re:^hair (between eyes|over one eye|over eyes|over shoulder|intakes|flaps|spread out|behind ear|pulled back|slicked back|down|up|rings|bobbles)$
+re:.*bangs$
+re:.*ponytail$
+re:.*twintails$
+re:.*braids?$
+re:.*(hair )?buns?$
+re:.*sidelocks$
+re:.*ahoge$
+antenna hair
+drill hair
+twin drills
+bob cut
+hime cut
+pixie cut
+buzz cut
+undercut
+mohawk
+forehead
+widow's peak
+multicolored hair
+gradient hair
+streaked hair
+two-tone hair
+colored inner hair
+colored tips
+inner hair
+hair tie
+# --- 目・顔 ---
+re:.* eyes$
+re:.* eye$
+re:.* eyebrows$
+re:.* eyelashes$
+re:.*pupils$
+re:.* sclera$
+heterochromia
+glowing eyes
+eyes visible through hair
+eyelashes
+long eyelashes
+thick eyebrows
+tsurime
+tareme
+sanpaku
+eyeshadow
+makeup
+lipstick
+red lips
+mole
+mole under eye
+mole under mouth
+mole on breast
+beauty mark
+freckles
+scar
+scar on face
+scar across eye
+eyepatch
+# --- 肌・体型 ---
+re:.* skin$
+tan
+tanlines
+re:.*breasts$
+flat chest
+cleavage
+collarbone
+thick thighs
+wide hips
+narrow waist
+curvy
+slim
+petite
+plump
+tall
+tall female
+short
+muscular female
+toned
+abs
+thighs
+navel
+nail polish
+long fingernails
+fingernails
+sharp fingernails
+aged up
+aged down
+child
+teenage
+adult
+# --- 種族・特徴 ---
+re:.* ears$
+re:.* tail$
+re:.* horns?$
+re:.* wings$
+horns
+horn
+wings
+halo
+fang
+fangs
+skin fang
+pointy ears
+elf
+dark elf
+demon girl
+angel
+fairy
+mermaid
+fox girl
+cat girl
+dog girl
+wolf girl
+kemonomimi
+animal ears
+animal ear fluff
+monster girl
+android
+robot girl

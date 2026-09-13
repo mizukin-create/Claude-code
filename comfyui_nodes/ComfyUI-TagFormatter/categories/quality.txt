@@ -1,0 +1,82 @@
+# 品質・レーティング・メタタグ（ポジ/ネガ両方）。1行1タグ。re: で始まる行は正規表現。
+masterpiece
+best quality
+amazing quality
+great quality
+good quality
+normal quality
+low quality
+worst quality
+bad quality
+very aesthetic
+aesthetic
+absurdres
+highres
+high resolution
+lowres
+very awa
+newest
+recent
+mid
+early
+old
+oldest
+re:^year \d{4}$
+re:^score_\d+(_up)?$
+re:^source_.+$
+re:^rating:.+$
+safe
+general
+sensitive
+questionable
+nsfw
+explicit
+ultra-detailed
+extremely detailed
+highly detailed
+very detailed
+detailed
+high quality
+ultra high res
+8k
+4k
+hdr
+sharp focus
+perfect anatomy
+beautiful
+official art
+# ネガティブ用
+bad anatomy
+bad hands
+bad feet
+bad proportions
+extra digits
+fewer digits
+extra fingers
+missing fingers
+extra arms
+extra legs
+missing arms
+missing legs
+malformed
+mutated
+mutation
+deformed
+disfigured
+ugly
+duplicate
+error
+jpeg artifacts
+blurry
+artist name
+signature
+watermark
+username
+logo
+text
+english text
+speech bubble
+censored
+mosaic censoring
+bar censor
+uncensored

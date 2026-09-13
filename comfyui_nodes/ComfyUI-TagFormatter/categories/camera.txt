@@ -1,0 +1,59 @@
+# 画角・構図・レンズ効果
+upper body
+lower body
+full body
+cowboy shot
+portrait
+close-up
+extreme close-up
+face focus
+eye focus
+foot focus
+re:.* focus$
+re:.* shot$
+re:^from .*$
+dutch angle
+wide shot
+very wide shot
+straight-on
+profile
+three-quarter view
+pov
+fisheye
+panorama
+dynamic angle
+high angle
+low angle
+bird's-eye view
+worm's-eye view
+overhead
+depth of field
+bokeh
+blurry background
+blurry foreground
+motion blur
+foreshortening
+perspective
+vanishing point
+letterboxed
+pillarboxed
+border
+framed
+out of frame
+re:.* out of frame$
+cropped
+symmetry
+symmetrical
+centered
+rule of thirds
+macro
+wide-angle
+telephoto
+tilt-shift
+mid shot
+medium shot
+bust shot
+knee shot
+head shot
+head out of frame
+feet out of frame
