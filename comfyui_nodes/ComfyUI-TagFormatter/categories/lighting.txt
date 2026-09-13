@@ -1,0 +1,41 @@
+# その他⑤: 光
+re:.*light$
+re:.*lighting$
+re:.*lights$
+re:^light .*$
+backlighting
+rim lighting
+soft lighting
+dramatic lighting
+cinematic lighting
+sunlight
+moonlight
+candlelight
+neon
+neon lights
+city lights
+light rays
+sunbeam
+god rays
+crepuscular rays
+dappled sunlight
+lens flare
+glowing
+glow
+bloom
+light particles
+spotlight
+volumetric lighting
+ambient light
+natural light
+warm lighting
+cool lighting
+sidelighting
+underlighting
+colored lighting
+sunshine
+glare
+shine
+shiny
+luminous
+ray tracing

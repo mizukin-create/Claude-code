@@ -1,0 +1,54 @@
+# その他④: 天候・季節・自然現象
+spring
+summer
+autumn
+fall
+winter
+cherry blossoms
+sakura
+petals
+falling petals
+cherry blossom petals
+autumn leaves
+maple leaves
+falling leaves
+leaves
+snow
+snowing
+snowflakes
+snowfall
+rain
+raining
+rainy
+light rain
+heavy rain
+puddle
+storm
+thunder
+lightning
+cloud
+clouds
+cloudy sky
+re:.* sky$
+wet
+cloudy
+blue sky
+sky
+overcast
+fog
+mist
+haze
+wind
+windy
+heat haze
+rainbow
+ocean waves
+waves
+splash
+water drop
+water drops
+dew
+frost
+ice
+hot
+cold

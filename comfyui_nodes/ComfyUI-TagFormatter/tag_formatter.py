@@ -29,7 +29,17 @@ ORDER = [
     "girl_pose",
     "camera",
     "male",
-    "other",
+    # --- "other", sub-ordered: where -> what -> when -> weather -> light -> shadow -> look ---
+    "location",
+    "situation",
+    "time",
+    "weather",
+    "lighting",
+    "shadow",
+    "style",
+    "artist",
+    "lora",
+    "unknown",
 ]
 
 # Classification order (first match wins).  Differs from output order on purpose:
@@ -44,6 +54,16 @@ CLASSIFY_ORDER = [
     "girl_expression",
     "girl_pose",
     "girl_appearance",
+    # (character names are tested here, see classify())
+    "artist",
+    "lora",
+    "time",
+    "weather",
+    "lighting",
+    "shadow",
+    "situation",
+    "location",
+    "style",
 ]
 
 LABELS_JA = {
@@ -55,9 +75,20 @@ LABELS_JA = {
     "girl_pose": "女ポーズ",
     "camera": "画角",
     "male": "男タグ",
-    "other": "その他",
+    "location": "場所",
+    "situation": "シチュエーション",
+    "time": "時間",
+    "weather": "天候・季節",
+    "lighting": "光",
+    "shadow": "影",
+    "style": "画風・効果",
+    "artist": "絵師",
+    "lora": "LoRA",
+    "unknown": "不明",
     "prose": "自然文",
 }
+
+GROUP_SEPARATORS = {"blank_line": ",\n\n", "newline": ",\n", "comma": ", "}
 
 # `name (series)` style Danbooru character tags.
 _NAME_WITH_SERIES = re.compile(r"^[^()]+\S \([^()]+\)$")
@@ -137,13 +168,13 @@ def is_character_name(norm):
 def classify(norm):
     """Return the output category for a normalized tag."""
     if not norm:
-        return "other"
+        return "unknown"
     for cat in CLASSIFY_ORDER:
+        if cat == "artist" and is_character_name(norm):
+            return "girl_appearance"
         if _load(cat).matches(norm):
             return cat
-    if is_character_name(norm):
-        return "girl_appearance"
-    return "other"
+    return "unknown"
 
 
 # ----------------------------------------------------------------------------- parsing
@@ -205,13 +236,16 @@ def _csv_set(s):
     return {normalize(x) for x in _split_top_level(s or "") if x.strip()}
 
 
-def format_tags(text, mode="reorder", remove_scope="appearance_and_name",
-                keep_tags="", extra_character_tags="", dedupe=True):
+def format_tags(text, mode="reorder", remove_scope="appearance_and_name", remove_clothes=False,
+                keep_tags="", extra_character_tags="", dedupe=True, group_separator="blank_line"):
     """
     mode: "reorder" | "remove_character" | "remove_character_and_reorder"
     remove_scope: "appearance_and_name" | "appearance" | "name"
+    remove_clothes: also drop girl_clothes tags when removing character tags
+    group_separator: "blank_line" | "newline" | "comma"  (between categories when reordering)
     Returns (formatted_text, removed_tags_csv, report_text)
     """
+    sep = GROUP_SEPARATORS.get(group_separator, GROUP_SEPARATORS["blank_line"])
     do_remove = mode in ("remove_character", "remove_character_and_reorder")
     do_reorder = mode in ("reorder", "remove_character_and_reorder")
     keep = _csv_set(keep_tags)
@@ -237,18 +271,22 @@ def format_tags(text, mode="reorder", remove_scope="appearance_and_name",
                     hit = True
                 if remove_scope in ("appearance_and_name", "name") and is_name:
                     hit = True
+                if remove_clothes and cat == "girl_clothes":
+                    hit = True
                 if hit:
                     removed.append(raw)
                     continue
             buckets[cat].append(raw)
             kept_in_order.append(raw)
 
-        ordered = [t for c in ORDER for t in buckets[c]] if do_reorder else kept_in_order
-        body = ", ".join(ordered)
+        if do_reorder:
+            body = sep.join(", ".join(buckets[c]) for c in ORDER if buckets[c])
+        else:
+            body = ", ".join(kept_in_order)
         if trailing_period and body:
             body += "."
         if prose:
-            body = (body + "\n" if body else "") + "\n".join(prose)
+            body = (body + "\n\n" if body else "") + "\n".join(prose)
         chunks_out.append(body)
         removed_all.extend(removed)
 

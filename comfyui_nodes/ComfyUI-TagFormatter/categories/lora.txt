@@ -1,0 +1,3 @@
+# その他⑨: LoRA / embedding 構文
+re:^<.*>$
+re:^embedding:.*$

@@ -1,0 +1,87 @@
+# その他①: 場所・背景
+re:.* background$
+re:.* (room|street|city|town|park|beach|school|classroom|rooftop|garden|forest|field|mountain|cafe|shop|store|station|bridge|shrine|temple|castle|library|kitchen|bathroom|bedroom|office|hallway|corridor|stairs|staircase|balcony|pool|lake|river|sea|ocean|interior|exterior|road|path|alley|market|square|plaza|tower|building|ruins|cave|island|harbor|port|pier|dock|platform|window|door|wall|floor|ceiling|bench|bed|sofa|couch|table|desk|chair)$
+outdoors
+indoors
+background
+detailed background
+scenery
+landscape
+nature
+urban
+japan
+tokyo
+rooftop
+classroom
+city
+cityscape
+skyline
+street
+alley
+beach
+ocean
+sea
+lake
+river
+riverbank
+forest
+meadow
+flower field
+garden
+park
+shrine
+torii
+temple
+castle
+ruins
+cave
+desert
+mountain
+hill
+cliff
+bedroom
+bed
+on bed
+kitchen
+bathroom
+bathtub
+hot spring
+onsen
+school
+hallway
+library
+cafe
+restaurant
+train
+train interior
+bus
+car interior
+station
+bridge
+pier
+harbor
+aquarium
+amusement park
+ferris wheel
+window
+door
+wall
+floor
+stairs
+balcony
+veranda
+pool
+poolside
+underwater
+space
+planet
+tatami
+shouji
+fence
+railing
+road
+crosswalk
+vending machine
+convenience store
+utility pole
+power lines

@@ -1,0 +1,74 @@
+# その他⑦: 色・画風・効果
+anime coloring
+anime screencap
+official style
+game cg
+flat color
+cel shading
+sketch
+lineart
+clean lineart
+thick lineart
+thin lineart
+no lineart
+painterly
+watercolor
+oil painting
+impasto
+pastel colors
+vivid colors
+muted colors
+limited palette
+monochrome
+greyscale
+grayscale
+sepia
+high contrast
+chromatic aberration
+film grain
+vignette
+motion lines
+speed lines
+sparkle
+sparkles
+bubbles
+glitter
+halftone
+screentone
+pixel art
+retro artstyle
+re:^\d{4}s \(style\)$
+re:.* \(style\)$
+re:.*artstyle$
+re:.* style$
+3d
+realistic
+photorealistic
+semi-realistic
+traditional media
+digital art
+illustration
+comic
+manga
+manga style
+2koma
+4koma
+concept art
+key visual
+poster
+album cover
+magazine cover
+cover
+gradient
+color halftone
+dithering
+glitch
+aura
+energy
+magic
+fire
+flame
+sparks
+smoke
+steam
+explosion

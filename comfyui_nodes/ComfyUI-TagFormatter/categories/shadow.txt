@@ -1,0 +1,11 @@
+# その他⑥: 影
+re:.*shadow.*
+silhouette
+dark
+darkness
+chiaroscuro
+low key
+shade
+shaded face
+dim
+dim lighting

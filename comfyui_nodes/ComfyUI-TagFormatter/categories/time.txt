@@ -1,0 +1,28 @@
+# その他③: 時間帯
+day
+daytime
+morning
+noon
+afternoon
+evening
+dusk
+twilight
+sunset
+sunrise
+dawn
+night
+midnight
+nighttime
+late night
+golden hour
+blue hour
+moon
+full moon
+crescent moon
+starry sky
+stars
+star (sky)
+night sky
+sunset sky
+evening sky
+morning sky

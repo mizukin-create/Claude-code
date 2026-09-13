@@ -1,0 +1,100 @@
+# その他②: シチュエーション・イベント・小物
+festival
+summer festival
+school festival
+fireworks
+christmas
+halloween
+valentine
+white day
+new year
+hatsumoude
+birthday
+wedding
+date
+picnic
+shopping
+cooking
+eating
+drinking
+reading
+studying
+bathing
+swimming
+tea party
+party
+concert
+live
+idol
+sports
+gym
+training
+playing instrument
+music
+guitar
+piano
+violin
+cycling
+bicycle
+motorcycle
+car
+flower
+flowers
+bouquet
+rose
+sunflower
+lily
+book
+cup
+teacup
+mug
+food
+ice cream
+cake
+candy
+lollipop
+bread
+onigiri
+bento
+tea
+coffee
+drink
+phone
+cellphone
+smartphone
+camera
+sword
+katana
+weapon
+gun
+staff
+wand
+shield
+bow (weapon)
+umbrella
+parasol
+lantern
+paper lantern
+candle
+balloon
+balloons
+stuffed animal
+stuffed toy
+teddy bear
+plush
+doll
+cat
+dog
+bird
+butterfly
+fish
+rabbit
+animal
+pet
+headset
+microphone
+letter
+envelope
+gift
+present
+box

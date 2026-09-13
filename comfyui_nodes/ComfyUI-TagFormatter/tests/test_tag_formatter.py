@@ -36,24 +36,43 @@ def test_classify():
         "looking back": "girl_pose", "holding umbrella": "girl_pose",
         "upper body": "camera", "depth of field": "camera", "from below": "camera", "cowboy shot": "camera",
         "1boy": "male", "male focus": "male", "old man": "male", "muscular male": "male",
-        "rooftop": "other", "sunset": "other", "backlighting": "other", "anime coloring": "other",
-        "<lora:foo:0.8>": "other", "old woman": "girl_subject",
+        "rooftop": "location", "sunset": "time", "backlighting": "lighting", "anime coloring": "style",
+        "orange sky": "weather", "night sky": "time", "rain": "weather", "shadow": "shadow", "@wlop": "artist",
+        "by rella": "artist", "<lora:foo:0.8>": "lora", "umbrella": "situation", "foobarbaz": "unknown",
+        "old woman": "girl_subject",
     }
     bad = {t: (classify(normalize(t)), want) for t, want in cases.items() if classify(normalize(t)) != want}
     assert not bad, bad
 
 
 def test_reorder_keeps_prose_and_period():
-    out, removed, report = format_tags(ANIMA, mode="reorder")
-    tags, prose = out.split("\n", 1)
+    out, removed, report = format_tags(ANIMA, mode="reorder", group_separator="comma")
+    tags, prose = out.split("\n\n", 1)
     assert prose.startswith("A girl on a school rooftop")
     assert tags.endswith("clean lineart.")
     assert tags.startswith("masterpiece, best quality, score_7, year 2025, newest, highres, safe, 1girl, solo, "
                            "long silver hair, blunt bangs, violet eyes, bright pupils, white blouse, sailor collar, "
                            "looking at viewer, gentle smile, parted lips, blush, floating hair, upper body, depth of field, "
-                           "rooftop")
+                           "rooftop, sunset, orange sky, wind, backlighting, rim lighting, anime coloring, clean lineart.")
     assert removed == ""
     assert "女ポーズ: floating hair" in report
+    assert "不明" not in report
+
+
+def test_group_separator_blank_line():
+    out, _, _ = format_tags("1girl, masterpiece, smile, night", group_separator="blank_line")
+    assert out == "masterpiece,\n\n1girl,\n\nsmile,\n\nnight"
+    out, _, _ = format_tags("1girl, masterpiece, smile, night", group_separator="newline")
+    assert out == "masterpiece,\n1girl,\nsmile,\nnight"
+
+
+def test_remove_clothes_option():
+    text = "1girl, aqua hair, detached sleeves, necktie, smile"
+    out, removed, _ = format_tags(text, mode="remove_character", remove_clothes=True)
+    assert removed == "aqua hair, detached sleeves, necktie"
+    assert out == "1girl, smile"
+    out, removed, _ = format_tags(text, mode="remove_character", remove_clothes=True, keep_tags="necktie")
+    assert out == "1girl, necktie, smile"
 
 
 def test_remove_character():
@@ -69,8 +88,8 @@ def test_remove_scope_and_keep():
     text = "1girl, ganyu (genshin impact), genshin impact, blue hair, horns, smile"
     out, removed, _ = format_tags(text, mode="remove_character_and_reorder", remove_scope="name")
     assert removed == "ganyu (genshin impact), genshin impact"
-    assert out == "1girl, blue hair, horns, smile"
-    out, removed, _ = format_tags(text, mode="remove_character_and_reorder", keep_tags="horns")
+    assert out == "1girl,\n\nblue hair, horns,\n\nsmile"
+    out, removed, _ = format_tags(text, mode="remove_character_and_reorder", keep_tags="horns", group_separator="comma")
     assert removed == "ganyu (genshin impact), genshin impact, blue hair"
     assert out == "1girl, horns, smile"
     out, removed, _ = format_tags(text, mode="remove_character", extra_character_tags="smile")
@@ -79,9 +98,9 @@ def test_remove_scope_and_keep():
 
 def test_weights_dedupe_break():
     text = "(masterpiece:1.2), long hair, (long hair:1.1), 1girl BREAK smile, red dress"
-    out, _, _ = format_tags(text)
+    out, _, _ = format_tags(text, group_separator="comma")
     assert out == "(masterpiece:1.2), 1girl, long hair BREAK red dress, smile"
-    out, _, _ = format_tags("long hair, long_hair, 1girl", dedupe=False)
+    out, _, _ = format_tags("long hair, long_hair, 1girl", dedupe=False, group_separator="comma")
     assert out == "1girl, long hair, long_hair"
 
 

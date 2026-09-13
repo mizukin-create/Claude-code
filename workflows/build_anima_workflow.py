@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""Generate a ComfyUI (UI-format) workflow JSON for Anima: txt2img -> 1.25x hires 2nd pass -> 2x ESRGAN final.
-Core nodes only (no custom nodes). Run: python3 build_anima_workflow.py
+"""Generate ComfyUI (UI-format) workflow JSON for Anima: txt2img -> 1.25x hires 2nd pass -> 2x ESRGAN final.
+Writes two files (run: python3 build_anima_workflow.py):
+  anima_t2i_hires.json              core nodes only (no custom nodes)
+  anima_t2i_hires_tagformatter.json same, plus ComfyUI-TagFormatter in front of the Positive CLIPTextEncode
 """
 import json
 
@@ -156,4 +158,33 @@ wf = {
 }
 with open("anima_t2i_hires.json", "w", encoding="utf-8") as f:
     json.dump(wf, f, ensure_ascii=False, indent=2)
-print("nodes:", len(nodes), "links:", len(links))
+print("anima_t2i_hires.json  nodes:", len(nodes), "links:", len(links))
+
+# --- variant: Positive text goes through ComfyUI-TagFormatter (comfyui_nodes/ComfyUI-TagFormatter) ---
+import copy
+wf2 = copy.deepcopy(wf)
+TF_ID, TF_LINK = 22, 27
+wf2["nodes"].append({
+    "id": TF_ID, "type": "TagFormatter", "pos": [450, -420], "size": [420, 340], "flags": {}, "order": 0, "mode": 0,
+    "inputs": [],
+    "outputs": [
+        {"name": "text", "type": "STRING", "links": [TF_LINK], "slot_index": 0},
+        {"name": "removed_tags", "type": "STRING", "links": [], "slot_index": 1},
+        {"name": "report", "type": "STRING", "links": [], "slot_index": 2},
+    ],
+    "properties": {"Node name for S&R": "TagFormatter"},
+    # order must match TagFormatter.INPUT_TYPES: text, mode, remove_scope, remove_clothes, dedupe, group_separator,
+    # keep_tags, extra_character_tags
+    "widgets_values": [POS, "reorder", "appearance_and_name", False, True, "blank_line", "", ""],
+    "title": "Tag Formatter (Positive)",
+})
+positive = next(n for n in wf2["nodes"] if n["id"] == 4)
+positive["inputs"].append({"name": "text", "type": "STRING", "widget": {"name": "text"}, "link": TF_LINK})
+positive["title"] = "Positive (text <- Tag Formatter)"
+wf2["links"].append([TF_LINK, TF_ID, 0, 4, 1, "STRING"])
+wf2["last_node_id"] = TF_ID
+wf2["last_link_id"] = TF_LINK
+wf2["groups"][1]["bounding"] = [430, -480, 1200, 1080]
+with open("anima_t2i_hires_tagformatter.json", "w", encoding="utf-8") as f:
+    json.dump(wf2, f, ensure_ascii=False, indent=2)
+print("anima_t2i_hires_tagformatter.json  nodes:", len(wf2["nodes"]), "links:", len(wf2["links"]))
