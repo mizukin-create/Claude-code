@@ -33,6 +33,18 @@ NOTE = """# Anima txt2img + Hires（1.25x 2nd pass）+ 2x ESRGAN 仕上げ
 4. 顔・目の仕上げは Impact Pack の FaceDetailer を 2nd pass の後に挿入（crop を 32 の倍数に整列）。
 
 出力は output/Anima/ 以下に 1st_pass / hires / final_2x の 3 種類を保存します。
+
+## よくあるエラー
+「接続がありません / 必須入力スロットに接続がありません」（KSampler の positive・negative）
+- 線が繋がって見えても出る場合は、上流の CLIPTextEncode（Positive / Negative）が
+  バイパス（Ctrl+B・紫）かミュート（Ctrl+M・暗転）になっている。実行時に出力が消えるため
+  KSampler 側が「接続なし」と判定される。該当ノードを選んで Ctrl+B / Ctrl+M で解除する。
+  ※「Turbo LoRA」ノードだけは既定でバイパス（紫）で正常。MODEL は素通りするので影響しない。
+- グループ単位のバイパス（グループタイトル右クリック → Bypass Group Nodes）も同じ症状になる。
+- ノードを Ctrl+V で貼り付けた場合は入力リンクが捨てられる。Ctrl+Shift+V（接続を保持して貼り付け）を使う。
+- 本当に線が外れている場合は、ワークフロー概要のエラー行右端の◇でそのスロットへジャンプできる。
+- 確実な復旧: workflows/anima_t2i_hires.json を読み込み直す（全 26 リンク接続済み）。
+  python3 build_anima_workflow.py で再生成も可能。
 """
 
 nodes = {}

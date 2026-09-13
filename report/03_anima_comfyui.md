@@ -164,6 +164,15 @@ KSampler(seed, steps 30-40, cfg 4-5 [Turbo: 8-12 / 1], sampler er_sde, scheduler
 [任意] ModelPatchLoader(anima-lllite-depth-1) → AnimaLLLiteApply(strength 0.7-1.0, end 0.6-0.8)
 ```
 
+### 7-1. ワークフローのよくあるエラー
+| 症状 | 原因 | 対処 |
+|---|---|---|
+| KSampler の positive / negative に「接続がありません（必須入力スロットに接続がありません）」。線は繋がって見える | 上流の CLIPTextEncode がバイパス（Ctrl+B・紫）またはミュート（Ctrl+M・暗転）。実行時に出力が消え、下流が「接続なし」になる | 該当ノードを選んで Ctrl+B / Ctrl+M で解除。グループ右クリックの Bypass Group Nodes も同症状 |
+| 同上（コピペ直後に発生） | Ctrl+V の通常貼り付けは入力リンクを捨てる | Ctrl+Shift+V（接続を保持して貼り付け）で貼り直す |
+| 同上（線が実際に無い） | ドラッグ操作で外れた | ワークフロー概要のエラー行右端の◇で該当スロットへジャンプして繋ぎ直す |
+| Turbo LoRA ノードが紫 | 既定でバイパス。MODEL は素通りするため正常 | Turbo を使うときだけ Ctrl+B で解除（steps 8〜10 / CFG 1） |
+| 復旧したい | — | `workflows/anima_t2i_hires.json` を読み込み直す（全 26 リンク接続済み。`build_anima_workflow.py` で再生成可） |
+
 ## 8. Top 15
 1. 絵師タグは必ず @name、ネガに artist name
 2. ポジ先頭を masterpiece, best quality, score_7, safe,（Aesthetic は score_* を外す）
